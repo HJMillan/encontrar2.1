@@ -15,30 +15,52 @@ const sectionsConfig = [
   {
     title: 'Un Familiar',
     color: '#8A2BE2', // Violet
-    subtitle: 'subtitulo Familiar',
+    subtitle: 'Cuidado y Seguridad',
     image: '/img/abuelo.jpg',
-    text: longText
+    features: [
+      'Geoposicionamiento en tiempo real',
+      'Historial de trayecto recorrido',
+      'Geocercas y Zonas Seguras (Casa, Colegio, Club)',
+      'Alerta sin movimiento'
+    ]
   },
   {
     title: 'Tus Objetos',
     color: '#FF0080', // Pink
-    subtitle: 'subtitulo Objetos',
+    subtitle: 'Protección de Bienes',
     image: '/img/abuelo.jpg',
-    text: longText
+    features: [
+      'Geoposicionamiento preciso',
+      'Historial de trayecto completo',
+      'Configuración de Geocercas',
+      'Alerta de movimiento no autorizado'
+    ]
   },
   {
     title: 'Tu Vehiculo',
     color: '#00D1FF', // Cyan
-    subtitle: 'subtitulo Vehiculo',
+    subtitle: 'Control Vehicular',
     image: '/img/mascota.jpg',
-    text: longText
+    features: [
+      'Rastreo GPS instantáneo',
+      'Historial de rutas y paradas',
+      'Geocercas de seguridad',
+      'Alerta de desplazamiento'
+    ]
   },
   {
     title: 'Tu Mascota',
     color: '#FFD700', // Gold
-    subtitle: 'subtitulo Mascota',
+    subtitle: 'Amor y Cuidado',
     image: '/img/mascota.jpg',
-    text: longText
+    features: [
+      'Ubicación exacta 24/7',
+      'Historial de paseos',
+      'Geocerca "Zona Segura"',
+      'Red de veterinarias cercanas',
+      'Historial clínico digital',
+      'Alerta de adopción'
+    ]
   },
 ];
 
@@ -201,7 +223,15 @@ export default function HomePage() {
                     <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-4 max-w-lg">
                       <h2 className="text-4xl md:text-6xl font-bold">{section.title}</h2>
                       {section.subtitle && <h3 className="text-2xl font-semibold opacity-90 uppercase tracking-widest">{section.subtitle}</h3>}
-                      <p className="text-sm md:text-base leading-relaxed opacity-80">{section.text}</p>
+                      {/* Feature List */}
+                      <ul className="space-y-3 mt-4">
+                        {section.features.map((feature, idx) => (
+                          <li key={idx} className="flex items-center space-x-3 text-sm md:text-base opacity-90">
+                            <span className="w-2 h-2 bg-white rounded-full flex-shrink-0" />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
                       <a
                         href="#"
                         className="mt-8 inline-block px-8 py-3 border-2 border-white text-white font-bold rounded-full hover:bg-white hover:text-black transition-colors uppercase tracking-widest text-sm"
