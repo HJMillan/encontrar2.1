@@ -1,5 +1,7 @@
 import { MapPin, Navigation, Shield, Bell, Lock, Activity, Heart, LocateFixed } from 'lucide-react';
-import imgAbuelo from '../public/img/abuelo.jpg';
+import imgFamiliar from '../public/img/familiar.jpg';
+import imgBicicleta from '../public/img/bicicleta.jpg';
+import imgVehiculo from '../public/img/vehiculo.jpg';
 import imgMascota from '../public/img/mascota.jpg';
 
 // Reusable text constant
@@ -11,7 +13,7 @@ export const sectionsConfig = [
         color: '#8A2BE2', // Violet
         textColor: 'text-white',
         subtitle: 'Cuidado y Seguridad',
-        image: imgAbuelo,
+        image: imgFamiliar,
         features: [
             { text: 'Geoposicionamiento en tiempo real', icon: MapPin },
             { text: 'Historial de trayecto recorrido', icon: Navigation },
@@ -24,7 +26,7 @@ export const sectionsConfig = [
         color: '#FF0080', // Pink
         textColor: 'text-white',
         subtitle: 'Protección de Bienes',
-        image: imgAbuelo,
+        image: imgBicicleta,
         features: [
             { text: 'Geoposicionamiento preciso', icon: LocateFixed },
             { text: 'Historial de trayecto completo', icon: Navigation },
@@ -37,7 +39,7 @@ export const sectionsConfig = [
         color: '#00D1FF', // Cyan
         textColor: 'text-black', // Critical Contrast Fix
         subtitle: 'Control Vehicular',
-        image: imgMascota,
+        image: imgVehiculo,
         features: [
             { text: 'Rastreo GPS instantáneo', icon: MapPin },
             { text: 'Historial de rutas y paradas', icon: Navigation },
