@@ -52,11 +52,18 @@ export default function Logo() {
                 <span className="absolute inset-0 rounded-full bg-white/50 shadow-lg z-10" />
 
                 {/* 
+                   Inner Circle Overlay 
+                   - Superposed 50% opacity = Solid center effect.
+                   - Inset-6 creates the "rim" effect.
+                */}
+                <span className="absolute inset-6 rounded-full bg-white/50 z-10" />
+
+                {/* 
                    Logo Image 
                    - Centered on white background.
                    - Z-20 to sit on top of everything.
                 */}
-                <div className="absolute inset-10 z-20">
+                <div className="absolute inset-10 z-20 translate-y-1">
                     <Image
                         src="/img/logo.png"
                         alt="Logo"
