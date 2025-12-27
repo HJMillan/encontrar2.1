@@ -9,29 +9,22 @@ body {
   width: 100%;
 }
 
-/* Standard CSS Animation to guarantee it works */
-@keyframes breathing-halo {
+/* Ripple Energy Animation (Shockwave) */
+@keyframes ripple-energy {
   0% {
     transform: scale(1);
-    opacity: 0.6;
-    /* Increased visibility */
-    filter: blur(8px);
-  }
-
-  55% {
-    transform: scale(1.3);
-    /* Increased range */
-    opacity: 0;
-    filter: blur(12px);
+    opacity: 0.8;
+    filter: blur(0px);
   }
 
   100% {
-    transform: scale(1);
-    opacity: 0.6;
-    filter: blur(8px);
+    transform: scale(2.5);
+    opacity: 0;
+    filter: blur(4px);
   }
 }
 
-.breathing-halo-animation {
-  animation: breathing-halo 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+.ripple-energy-animation {
+  animation: ripple-energy 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform, opacity, filter;
 }

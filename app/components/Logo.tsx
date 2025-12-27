@@ -5,43 +5,58 @@ export default function Logo() {
     return (
         <div id="app-logo" className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 transition-opacity duration-500">
             {/* 
-               Premium "Anti-Loader" Structure 
-               - Size: 96px (6rem) square for perfect circle halos.
+               Ripple Energy Structure 
+               - Size: 96px (6rem) square for anchor.
             */}
-            <div className="relative w-24 h-24 grid place-items-center">
+            <div className="relative w-48 h-48 grid place-items-center">
 
                 {/* 
-                   Halo 2: Outer Breath (Big)
+                   Wave 3 (Outer/Last)
+                   - Delay 2.4s
                 */}
-                <span className="absolute inset-0 rounded-full breathing-halo-animation z-0"
+                <span className="absolute inset-0 rounded-full ripple-energy-animation z-0"
                     style={{
-                        animationDelay: '1.1s',
-                        backgroundColor: 'rgba(255, 255, 255, 0.4)', // Visible fallback 
-                        boxShadow: '0 0 30px 10px rgba(255, 255, 255, 0.5)' // Heavy glow
+                        animationDelay: '2.4s',
+                        border: '2px solid rgba(255, 255, 255, 0.3)',
+                        boxShadow: '0 0 15px rgba(255, 255, 255, 0.4)'
                     }}
                 />
 
                 {/* 
-                   Halo 1: Inner Breath (Medium)
+                   Wave 2 (Middle)
+                   - Delay 1.2s
                 */}
-                <span className="absolute inset-0 rounded-full breathing-halo-animation z-0"
+                <span className="absolute inset-0 rounded-full ripple-energy-animation z-0"
                     style={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                        boxShadow: '0 0 20px 5px rgba(255, 255, 255, 0.6)'
+                        animationDelay: '1.2s',
+                        border: '2px solid rgba(255, 255, 255, 0.3)',
+                        boxShadow: '0 0 15px rgba(255, 255, 255, 0.4)'
                     }}
                 />
 
                 {/* 
-                   Fixed Ring Anchor & Background (Top Layer of Backgrounds)
+                   Wave 1 (Inner/First)
+                   - Delay 0s
                 */}
-                <span className="absolute inset-0 rounded-full bg-white border border-white/20 shadow-[0_0_0_1px_rgba(255,255,255,0.05)] relative z-10" />
+                <span className="absolute inset-0 rounded-full ripple-energy-animation z-0"
+                    style={{
+                        animationDelay: '0s',
+                        border: '2px solid rgba(255, 255, 255, 0.3)',
+                        boxShadow: '0 0 15px rgba(255, 255, 255, 0.4)'
+                    }}
+                />
+
+                {/* 
+                   Solid White Anchor (Top Layer z-10)
+                */}
+                <span className="absolute inset-0 rounded-full bg-white/50 shadow-lg z-10" />
 
                 {/* 
                    Logo Image 
-                   - Contained within the circle.
-                   - Increased padding (p-5) for breathing room.
+                   - Centered on white background.
+                   - Z-20 to sit on top of everything.
                 */}
-                <div className="relative w-full h-full p-5 z-20">
+                <div className="absolute inset-10 z-20">
                     <Image
                         src="/img/logo.png"
                         alt="Logo"
