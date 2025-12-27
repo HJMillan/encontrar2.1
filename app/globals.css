@@ -1,10 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@200..900&display=swap');
 @import "tailwindcss";
 
 body {
   background-color: #111;
   color: white;
-  font-family: 'Unbounded', sans-serif;
+  font-family: var(--font-unbounded), sans-serif;
   overflow-x: hidden;
   width: 100%;
 }

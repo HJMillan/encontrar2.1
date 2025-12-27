@@ -4,70 +4,12 @@ import { useLayoutEffect, useRef } from 'react';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { MapPin, Navigation, Shield, Bell, Lock, Activity, Heart, LocateFixed } from 'lucide-react';
 import Logo from './components/Logo';
-
-// Static Imports for Blur-up
-import imgAbuelo from '../public/img/abuelo.jpg';
-import imgMascota from '../public/img/mascota.jpg';
+import ScrollySection from './components/ScrollySection';
+import ScrollToTop from './components/ScrollToTop';
+import { sectionsConfig } from './data';
 
 gsap.registerPlugin(ScrollTrigger);
-
-// --- Configuration for the scrollytelling sections ---
-const longText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
-
-const sectionsConfig = [
-  {
-    title: 'Un Familiar',
-    color: '#8A2BE2', // Violet
-    subtitle: 'Cuidado y Seguridad',
-    image: imgAbuelo,
-    features: [
-      { text: 'Geoposicionamiento en tiempo real', icon: MapPin },
-      { text: 'Historial de trayecto recorrido', icon: Navigation },
-      { text: 'Geocercas y Zonas Seguras', icon: Shield },
-      { text: 'Alerta sin movimiento', icon: Bell }
-    ]
-  },
-  {
-    title: 'Tus Objetos',
-    color: '#FF0080', // Pink
-    subtitle: 'Protección de Bienes',
-    image: imgAbuelo, // Using same image as placeholder or re-use
-    features: [
-      { text: 'Geoposicionamiento preciso', icon: LocateFixed },
-      { text: 'Historial de trayecto completo', icon: Navigation },
-      { text: 'Configuración de Geocercas', icon: Lock },
-      { text: 'Alerta movimiento no autorizado', icon: Bell }
-    ]
-  },
-  {
-    title: 'Tu Vehiculo',
-    color: '#00D1FF', // Cyan
-    subtitle: 'Control Vehicular',
-    image: imgMascota,
-    features: [
-      { text: 'Rastreo GPS instantáneo', icon: MapPin },
-      { text: 'Historial de rutas y paradas', icon: Navigation },
-      { text: 'Geocercas de seguridad', icon: Shield },
-      { text: 'Alerta de desplazamiento', icon: Bell }
-    ]
-  },
-  {
-    title: 'Tu Mascota',
-    color: '#FFD700', // Gold
-    subtitle: 'Amor y Cuidado',
-    image: imgMascota,
-    features: [
-      { text: 'Ubicación exacta 24/7', icon: MapPin },
-      { text: 'Historial de paseos', icon: Activity },
-      { text: 'Geocerca "Zona Segura"', icon: Shield },
-      { text: 'Red de veterinarias cercanas', icon: Heart },
-      { text: 'Historial clínico digital', icon: Activity },
-      { text: 'Alerta de adopción', icon: Bell }
-    ]
-  },
-];
 
 export default function HomePage() {
   const component = useRef<HTMLDivElement>(null);
@@ -102,7 +44,9 @@ export default function HomePage() {
         });
 
         // --- Hero Scroll Effect ---
-        tl.to('.hero-title', { opacity: 0, scale: 0.8, duration: 1, ease: 'power2.in' }, '+=1');
+        // Use fromTo to strictly define the start state (1) and end state (0)
+        // This prevents race conditions with the initial entrance animation
+        tl.fromTo('.hero-title', { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.8, duration: 1, ease: 'power2.in' }, '+=1');
 
         // --- Loop through sections to create transitions ---
         sectionsConfig.forEach((section, index) => {
@@ -141,12 +85,14 @@ export default function HomePage() {
         tl.fromTo('.footer-title', { opacity: 0, y: 100 }, { opacity: 1, y: 0, duration: 2 }, 'footer');
 
         // Fluid Logo Transition (Desktop)
+        // Fluid Logo Transition (Desktop) - GPU Accelerated
+        // Moves from center (50%) to left (approx 8%) using Transforms (42vw diff)
+        // Moves from bottom (32px) to approx 25vh using Y transform
         tl.to('#app-logo', {
-          left: '8%',      // Approximate left column position
-          xPercent: 0,      // Remove centering
-          bottom: '25%',    // Move up to catch the footer
+          x: '-42vw',       // Move left
+          y: '-22vh',       // Move up
           scale: 0.7,       // Shrink
-          opacity: 0,       // Fade out eventually
+          opacity: 0,       // Fade out
           duration: 1.5,
           ease: 'power2.inOut'
         }, 'footer');
@@ -168,7 +114,19 @@ export default function HomePage() {
         });
 
         // --- Hero Animation ---
-        tl.to('.hero-title', { opacity: 0, scale: 0.8, duration: 1 }, '+=0.5');
+        tl.fromTo('.hero-title', { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.8, duration: 1 }, '+=0.5');
+
+        // --- Mobile Progress Bar ---
+        gsap.to('.mobile-progress-bar', {
+          scaleX: 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: scrolly.current,
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: 0
+          }
+        });
 
         // --- Loop through sections ---
         sectionsConfig.forEach((section, index) => {
@@ -202,22 +160,8 @@ export default function HomePage() {
         tl.to('#footer-logo', { opacity: 1, duration: 1 }, 'footer');
       });
 
-      // Interactive Depth (Tilt)
-      const handleMouseMove = (e: MouseEvent) => {
-        const x = (e.clientX / window.innerWidth - 0.5) * 30; // Tilt range
-        const y = (e.clientY / window.innerHeight - 0.5) * 30;
-        gsap.to('.image-tilt-target', {
-          rotationY: x,
-          rotationX: -y,
-          ease: 'power2.out',
-          duration: 1
-        });
-      };
-      window.addEventListener('mousemove', handleMouseMove);
-
       return () => {
         ctx.revert();
-        window.removeEventListener('mousemove', handleMouseMove);
       };
     }, component);
   }, []);
@@ -245,6 +189,10 @@ export default function HomePage() {
       </div>
 
       <Logo />
+      <ScrollToTop />
+
+      {/* Mobile Progress Bar (Refreshed) - High Visibility Gradient */}
+      <div className="fixed top-0 left-0 h-1 bg-gradient-to-r from-purple-600 to-orange-500 z-50 mobile-progress-bar md:hidden origin-left scale-x-0 w-full shadow-md" />
 
       <main>
         {/* ... */}
@@ -253,60 +201,13 @@ export default function HomePage() {
           <div ref={background} className="background-wipe absolute inset-0 z-0" />
 
           {/* 2. Content Layer (Text & Images) */}
-          <div className="absolute inset-0 z-10 text-white">
+          <div className="absolute inset-0 z-10">
             <h1 className="hero-title absolute inset-x-0 top-1/3 text-center text-5xl md:text-7xl font-black z-30">
               LA LIBERTAD DE<br />DEJARLOS IR
             </h1>
-            {sectionsConfig.map((section, index) => {
-              // Calculate specific border-radius for the "rotating angle" effect
-              let radius = '200px 200px 200px 200px';
-              if (index % 4 === 0) radius = '0px 150px 150px 150px'; // TL
-              if (index % 4 === 1) radius = '150px 0px 150px 150px'; // TR
-              if (index % 4 === 2) radius = '150px 150px 0px 150px'; // BR
-              if (index % 4 === 3) radius = '150px 150px 150px 0px'; // BL
-
-              return (
-                <div key={index} className="absolute inset-0">
-                  <div id={`section-${index}-title`} className="absolute left-0 top-0 h-full w-full md:w-1/2 flex items-center justify-center p-8 md:p-16">
-                    <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-4 max-w-lg">
-                      <h2 className="text-4xl md:text-6xl font-bold">{section.title}</h2>
-                      {section.subtitle && <h3 className="text-2xl font-semibold opacity-90 uppercase tracking-widest">{section.subtitle}</h3>}
-                      {/* Feature List (Rich Icons) */}
-                      <ul className="space-y-4 mt-6">
-                        {section.features.map((feature, idx) => {
-                          const Icon = feature.icon;
-                          return (
-                            <li key={idx} className="flex items-center space-x-4 text-sm md:text-base opacity-90 group cursor-default">
-                              <div className="p-2 bg-white/20 rounded-full group-hover:bg-white/40 transition-colors">
-                                <Icon size={18} className="text-white" />
-                              </div>
-                              <span>{feature.text}</span>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                      <a
-                        href="#"
-                        className="mt-8 inline-block px-8 py-3 border-2 border-white text-white font-bold rounded-full hover:bg-white hover:text-black transition-colors uppercase tracking-widest text-sm"
-                      >
-                        Más Información
-                      </a>
-                    </div>
-                  </div>
-                  <div id={`section-${index}-image`} className="absolute left-0 top-1/2 md:left-auto md:right-0 md:top-0 h-1/2 w-full md:h-full md:w-1/2 flex items-center justify-center">
-                    <Image
-                      src={section.image}
-                      alt={section.title}
-                      width={500}
-                      height={600}
-                      placeholder="blur"
-                      style={{ borderRadius: radius }}
-                      className="shadow-2xl bg-white/10 p-2 w-64 h-80 md:w-[500px] md:h-[600px] object-cover transition-all image-tilt-target"
-                    />
-                  </div>
-                </div>
-              );
-            })}
+            {sectionsConfig.map((section, index) => (
+              <ScrollySection key={index} section={section} index={index} priority={index === 0} />
+            ))}
             <div className="footer-title absolute inset-0 flex flex-col items-center justify-end text-center opacity-0 pb-32 space-y-8">
               <h2 className="text-8xl md:text-5xl font-bold">EMPEZÁ HOY.</h2>
               <div className="flex flex-col md:flex-row gap-4">
