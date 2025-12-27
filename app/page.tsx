@@ -4,7 +4,12 @@ import { useLayoutEffect, useRef } from 'react';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { MapPin, Navigation, Shield, Bell, Lock, Activity, Heart, LocateFixed } from 'lucide-react';
 import Logo from './components/Logo';
+
+// Static Imports for Blur-up
+import imgAbuelo from '../public/img/abuelo.jpg';
+import imgMascota from '../public/img/mascota.jpg';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,50 +21,50 @@ const sectionsConfig = [
     title: 'Un Familiar',
     color: '#8A2BE2', // Violet
     subtitle: 'Cuidado y Seguridad',
-    image: '/img/abuelo.jpg',
+    image: imgAbuelo,
     features: [
-      'Geoposicionamiento en tiempo real',
-      'Historial de trayecto recorrido',
-      'Geocercas y Zonas Seguras (Casa, Colegio, Club)',
-      'Alerta sin movimiento'
+      { text: 'Geoposicionamiento en tiempo real', icon: MapPin },
+      { text: 'Historial de trayecto recorrido', icon: Navigation },
+      { text: 'Geocercas y Zonas Seguras', icon: Shield },
+      { text: 'Alerta sin movimiento', icon: Bell }
     ]
   },
   {
     title: 'Tus Objetos',
     color: '#FF0080', // Pink
     subtitle: 'Protección de Bienes',
-    image: '/img/abuelo.jpg',
+    image: imgAbuelo, // Using same image as placeholder or re-use
     features: [
-      'Geoposicionamiento preciso',
-      'Historial de trayecto completo',
-      'Configuración de Geocercas',
-      'Alerta de movimiento no autorizado'
+      { text: 'Geoposicionamiento preciso', icon: LocateFixed },
+      { text: 'Historial de trayecto completo', icon: Navigation },
+      { text: 'Configuración de Geocercas', icon: Lock },
+      { text: 'Alerta movimiento no autorizado', icon: Bell }
     ]
   },
   {
     title: 'Tu Vehiculo',
     color: '#00D1FF', // Cyan
     subtitle: 'Control Vehicular',
-    image: '/img/mascota.jpg',
+    image: imgMascota,
     features: [
-      'Rastreo GPS instantáneo',
-      'Historial de rutas y paradas',
-      'Geocercas de seguridad',
-      'Alerta de desplazamiento'
+      { text: 'Rastreo GPS instantáneo', icon: MapPin },
+      { text: 'Historial de rutas y paradas', icon: Navigation },
+      { text: 'Geocercas de seguridad', icon: Shield },
+      { text: 'Alerta de desplazamiento', icon: Bell }
     ]
   },
   {
     title: 'Tu Mascota',
     color: '#FFD700', // Gold
     subtitle: 'Amor y Cuidado',
-    image: '/img/mascota.jpg',
+    image: imgMascota,
     features: [
-      'Ubicación exacta 24/7',
-      'Historial de paseos',
-      'Geocerca "Zona Segura"',
-      'Red de veterinarias cercanas',
-      'Historial clínico digital',
-      'Alerta de adopción'
+      { text: 'Ubicación exacta 24/7', icon: MapPin },
+      { text: 'Historial de paseos', icon: Activity },
+      { text: 'Geocerca "Zona Segura"', icon: Shield },
+      { text: 'Red de veterinarias cercanas', icon: Heart },
+      { text: 'Historial clínico digital', icon: Activity },
+      { text: 'Alerta de adopción', icon: Bell }
     ]
   },
 ];
@@ -81,6 +86,9 @@ export default function HomePage() {
         '--angle': '180deg',
       });
 
+      // --- Hero Cinematic Entrance (Global Load) ---
+      gsap.fromTo('.hero-title', { y: 100, opacity: 0, scale: 0.9 }, { y: 0, opacity: 1, scale: 1, duration: 1.5, ease: 'power3.out', delay: 0.2 });
+
       // Desktop Animations
       mm.add("(min-width: 768px)", () => {
         const tl = gsap.timeline({
@@ -93,7 +101,7 @@ export default function HomePage() {
           },
         });
 
-        // --- Hero Animation ---
+        // --- Hero Scroll Effect ---
         tl.to('.hero-title', { opacity: 0, scale: 0.8, duration: 1, ease: 'power2.in' }, '+=1');
 
         // --- Loop through sections to create transitions ---
@@ -104,6 +112,13 @@ export default function HomePage() {
           tl.fromTo(`${sectionId}-title`, { xPercent: -100, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 2 }, `section${index}`);
           tl.fromTo(`${sectionId}-image`, { xPercent: 100, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 2 }, `section${index}`);
 
+          // Staggered Features Animation
+          tl.fromTo(`${sectionId}-title ul li`, { x: -20, opacity: 0 }, { x: 0, opacity: 1, stagger: 0.1, duration: 1 }, `section${index}+=1`);
+
+          // Sliding Pill Animation
+          // Move to the current index position (0, 1.75rem, 3.5rem, etc.)
+          tl.to('#nav-indicator', { y: `${index * 1.75}rem`, duration: 1, ease: 'power2.out' }, `section${index}`);
+
           // THE CRITICAL DIAGONAL WIPE TRANSITION
           tl.set(background.current, { '--color-bottom': section.color, '--angle': '170deg' }, `section${index}`);
           tl.to(background.current, { '--angle': '180deg', duration: 2 }, `section${index}`);
@@ -111,6 +126,8 @@ export default function HomePage() {
 
           // Pincer animation OUT
           if (index < sectionsConfig.length) {
+            tl.to(`${sectionId}-title`, { xPercent: -100, opacity: 0, duration: 2 }, `section${index}+=3`);
+            tl.to(`${sectionId}-image`, { xPercent: 100, opacity: 0, duration: 2 }, `section${index}+=3`);
             tl.to(`${sectionId}-title`, { xPercent: -100, opacity: 0, duration: 2 }, `section${index}+=3`);
             tl.to(`${sectionId}-image`, { xPercent: 100, opacity: 0, duration: 2 }, `section${index}+=3`);
           }
@@ -161,6 +178,9 @@ export default function HomePage() {
           tl.fromTo(`${sectionId}-title`, { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 2 }, `section${index}`);
           tl.fromTo(`${sectionId}-image`, { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 2 }, `section${index}`);
 
+          // Staggered Features Animation (Mobile)
+          tl.fromTo(`${sectionId}-title ul li`, { y: 10, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 1 }, `section${index}+=0.5`);
+
           // Transition color
           tl.set(background.current, { '--color-bottom': section.color, '--angle': '170deg' }, `section${index}`);
           tl.to(background.current, { '--angle': '180deg', duration: 2 }, `section${index}`);
@@ -179,22 +199,50 @@ export default function HomePage() {
         tl.to(background.current, { '--angle': '180deg', duration: 2 }, 'footer');
         tl.set(background.current, { '--color-top': '#111' });
         tl.fromTo('.footer-title', { opacity: 0, y: 100 }, { opacity: 1, y: 0, duration: 2 }, 'footer');
-        // Simple fade for mobile to avoid layout headaches
-        tl.to('#app-logo', { opacity: 0, duration: 1 }, 'footer');
         tl.to('#footer-logo', { opacity: 1, duration: 1 }, 'footer');
       });
 
+      // Interactive Depth (Tilt)
+      const handleMouseMove = (e: MouseEvent) => {
+        const x = (e.clientX / window.innerWidth - 0.5) * 30; // Tilt range
+        const y = (e.clientY / window.innerHeight - 0.5) * 30;
+        gsap.to('.image-tilt-target', {
+          rotationY: x,
+          rotationX: -y,
+          ease: 'power2.out',
+          duration: 1
+        });
+      };
+      window.addEventListener('mousemove', handleMouseMove);
+
+      return () => {
+        ctx.revert();
+        window.removeEventListener('mousemove', handleMouseMove);
+      };
     }, component);
-    return () => ctx.revert();
   }, []);
 
   return (
     <div ref={component}>
       <style jsx global>{`
         .background-wipe {
+          --color-top: #FF4D00;
+          --color-bottom: #FF4D00;
+          --angle: 180deg;
           background: linear-gradient(var(--angle), var(--color-top) 0%, var(--color-top) 50%, var(--color-bottom) 50%, var(--color-bottom) 100%);
         }
       `}</style>
+
+      {/* Navigation Dots (Desktop Only) */}
+      <div className="fixed right-8 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-4">
+        {/* Sliding Indicator */}
+        <div id="nav-indicator" className="absolute top-0 left-0 w-3 h-3 rounded-full bg-white shadow-[0_0_15px_rgba(255,255,255,0.8)] z-10" />
+
+        {/* Static Background Dots */}
+        {sectionsConfig.map((_, idx) => (
+          <div key={idx} className="w-3 h-3 rounded-full bg-white opacity-20" />
+        ))}
+      </div>
 
       <Logo />
 
@@ -212,10 +260,10 @@ export default function HomePage() {
             {sectionsConfig.map((section, index) => {
               // Calculate specific border-radius for the "rotating angle" effect
               let radius = '200px 200px 200px 200px';
-              if (index % 4 === 0) radius = '0px 200px 200px 200px'; // TL
-              if (index % 4 === 1) radius = '200px 0px 200px 200px'; // TR
-              if (index % 4 === 2) radius = '200px 200px 0px 200px'; // BR
-              if (index % 4 === 3) radius = '200px 200px 200px 0px'; // BL
+              if (index % 4 === 0) radius = '0px 150px 150px 150px'; // TL
+              if (index % 4 === 1) radius = '150px 0px 150px 150px'; // TR
+              if (index % 4 === 2) radius = '150px 150px 0px 150px'; // BR
+              if (index % 4 === 3) radius = '150px 150px 150px 0px'; // BL
 
               return (
                 <div key={index} className="absolute inset-0">
@@ -223,14 +271,19 @@ export default function HomePage() {
                     <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-4 max-w-lg">
                       <h2 className="text-4xl md:text-6xl font-bold">{section.title}</h2>
                       {section.subtitle && <h3 className="text-2xl font-semibold opacity-90 uppercase tracking-widest">{section.subtitle}</h3>}
-                      {/* Feature List */}
-                      <ul className="space-y-3 mt-4">
-                        {section.features.map((feature, idx) => (
-                          <li key={idx} className="flex items-center space-x-3 text-sm md:text-base opacity-90">
-                            <span className="w-2 h-2 bg-white rounded-full flex-shrink-0" />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
+                      {/* Feature List (Rich Icons) */}
+                      <ul className="space-y-4 mt-6">
+                        {section.features.map((feature, idx) => {
+                          const Icon = feature.icon;
+                          return (
+                            <li key={idx} className="flex items-center space-x-4 text-sm md:text-base opacity-90 group cursor-default">
+                              <div className="p-2 bg-white/20 rounded-full group-hover:bg-white/40 transition-colors">
+                                <Icon size={18} className="text-white" />
+                              </div>
+                              <span>{feature.text}</span>
+                            </li>
+                          );
+                        })}
                       </ul>
                       <a
                         href="#"
@@ -246,15 +299,26 @@ export default function HomePage() {
                       alt={section.title}
                       width={500}
                       height={600}
+                      placeholder="blur"
                       style={{ borderRadius: radius }}
-                      className="shadow-2xl bg-white/10 p-2 w-64 h-80 md:w-[500px] md:h-[600px] object-cover transition-all"
+                      className="shadow-2xl bg-white/10 p-2 w-64 h-80 md:w-[500px] md:h-[600px] object-cover transition-all image-tilt-target"
                     />
                   </div>
                 </div>
               );
             })}
-            <div className="footer-title absolute inset-0 flex items-end justify-center text-center opacity-0 pb-32">
+            <div className="footer-title absolute inset-0 flex flex-col items-center justify-end text-center opacity-0 pb-32 space-y-8">
               <h2 className="text-8xl md:text-5xl font-bold">EMPEZÁ HOY.</h2>
+              <div className="flex flex-col md:flex-row gap-4">
+                <button className="bg-white text-black px-6 py-3 rounded-xl font-bold flex items-center gap-3 hover:scale-105 transition-transform">
+                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.74 1.18 0 2.21-.93 3.12-.93.65 0 3.19.1 4.52 2.38-3.79 1.88-3.11 6.84 1.28 8.68-.69 1.34-1.29 2.13-1.8 2.53zM13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" /></svg>
+                  <span>App Store</span>
+                </button>
+                <button className="bg-transparent border border-gray-500 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-3 hover:bg-white/10 hover:border-white transition-all">
+                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm11.597 11.598l7.108-7.109A.996.996 0 0022 6.96v10.08a1 1 0 00-.686-.657l-7.108-7.11zM14.5 12.708l-1.415 1.414 7.022 7.022c.2.2.534.148.625-.11l.363-.984-6.595-7.342zM4.292 23.415l7.342-6.595-.984-.363a.475.475 0 00-.11-.625L4.292 23.415z" /></svg>
+                  <span>Google Play</span>
+                </button>
+              </div>
             </div>
           </div>
 
