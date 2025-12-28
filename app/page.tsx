@@ -7,6 +7,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Logo from './components/Logo';
 import ScrollySection from './components/ScrollySection';
 import ScrollToTop from './components/ScrollToTop';
+import StoreButton from './components/StoreButton';
 import { sectionsConfig } from './data';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -37,7 +38,7 @@ export default function HomePage() {
           scrollTrigger: {
             trigger: scrolly.current,
             start: 'top top',
-            end: '+=6000',
+            end: `+=${sectionsConfig.length * 1500}`,
             scrub: 1,
             pin: true,
           },
@@ -107,7 +108,7 @@ export default function HomePage() {
           scrollTrigger: {
             trigger: scrolly.current,
             start: 'top top',
-            end: '+=6000',
+            end: `+=${sectionsConfig.length * 1500}`,
             scrub: 1,
             pin: true,
           },
@@ -211,14 +212,8 @@ export default function HomePage() {
             <div className="footer-title absolute inset-0 flex flex-col items-center justify-end text-center opacity-0 pb-32 space-y-8">
               <h2 className="text-8xl md:text-5xl font-bold">EMPEZÁ HOY.</h2>
               <div className="flex flex-col md:flex-row gap-4">
-                <button className="bg-white text-black px-6 py-3 rounded-xl font-bold flex items-center gap-3 hover:scale-105 transition-transform">
-                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.74 1.18 0 2.21-.93 3.12-.93.65 0 3.19.1 4.52 2.38-3.79 1.88-3.11 6.84 1.28 8.68-.69 1.34-1.29 2.13-1.8 2.53zM13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" /></svg>
-                  <span>App Store</span>
-                </button>
-                <button className="bg-transparent border border-gray-500 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-3 hover:bg-white/10 hover:border-white transition-all">
-                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm11.597 11.598l7.108-7.109A.996.996 0 0022 6.96v10.08a1 1 0 00-.686-.657l-7.108-7.11zM14.5 12.708l-1.415 1.414 7.022 7.022c.2.2.534.148.625-.11l.363-.984-6.595-7.342zM4.292 23.415l7.342-6.595-.984-.363a.475.475 0 00-.11-.625L4.292 23.415z" /></svg>
-                  <span>Google Play</span>
-                </button>
+                <StoreButton store="apple" variant="light" />
+                <StoreButton store="google" variant="outline" />
               </div>
             </div>
           </div>
