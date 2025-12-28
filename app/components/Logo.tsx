@@ -8,7 +8,7 @@ export default function Logo() {
                Ripple Energy Structure 
                - Size: 96px (6rem) square for anchor.
             */}
-            <div className="relative w-48 h-48 grid place-items-center">
+            <div className="relative w-28 h-28 md:w-48 md:h-48 grid place-items-center">
 
                 {/* 
                    Wave 3 (Outer/Last)
@@ -64,13 +64,27 @@ export default function Logo() {
                    - Z-20 to sit on top of everything.
                 */}
                 <div className="absolute inset-10 z-20 translate-y-1">
-                    <Image
-                        src="/img/logo.png"
-                        alt="Logo"
-                        fill
-                        style={{ objectFit: 'contain' }}
-                        className="drop-shadow-none"
-                    />
+                    {/* Mobile Logo (logo_ar.png) */}
+                    <div className="md:hidden w-full h-full relative">
+                        <Image
+                            src="/img/logo_ar.png"
+                            alt="Logo Mobile"
+                            fill
+                            style={{ objectFit: 'contain' }}
+                            className="drop-shadow-none"
+                        />
+                    </div>
+
+                    {/* Desktop Logo (logo.png) */}
+                    <div className="hidden md:block w-full h-full relative">
+                        <Image
+                            src="/img/logo.png"
+                            alt="Logo Desktop"
+                            fill
+                            style={{ objectFit: 'contain' }}
+                            className="drop-shadow-none"
+                        />
+                    </div>
                 </div>
             </div>
         </div>

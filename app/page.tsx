@@ -22,11 +22,12 @@ export default function HomePage() {
       const mm = gsap.matchMedia();
 
       // --- Set initial colors ---
-      const initialColor = '#FF4D00'; // Hero Orange
+      const initialTop = '#ff4d00';
+      const initialBottom = '#990000';
       gsap.set(background.current, {
-        '--color-top': initialColor,
-        '--color-bottom': initialColor,
-        '--angle': '180deg',
+        '--color-top': initialTop,
+        '--color-bottom': initialBottom,
+        '--angle': '181deg',
       });
 
       // --- Hero Cinematic Entrance (Global Load) ---
@@ -65,9 +66,12 @@ export default function HomePage() {
           tl.to('#nav-indicator', { y: `${index * 1.75}rem`, duration: 1, ease: 'power2.out' }, `section${index}`);
 
           // THE CRITICAL DIAGONAL WIPE TRANSITION
-          tl.set(background.current, { '--color-bottom': section.color, '--angle': '170deg' }, `section${index}`);
-          tl.to(background.current, { '--angle': '180deg', duration: 2 }, `section${index}`);
-          tl.set(background.current, { '--color-top': section.color });
+          // Smooth Gradient Transition
+          tl.to(background.current, {
+            '--color-top': section.gradient.top,
+            '--color-bottom': section.gradient.bottom,
+            duration: 2
+          }, `section${index}`);
 
           // Pincer animation OUT
           if (index < sectionsConfig.length) {
@@ -129,6 +133,17 @@ export default function HomePage() {
           }
         });
 
+        // --- Mobile Logo Animation (Integrated into Main Timeline) ---
+        // Places it at the very start (0) so it happens immediately as scrolling begins
+        tl.to('#app-logo', {
+          left: '2rem',           // Move to left padding
+          xPercent: 0,            // Remove centering
+          scale: 0.5,             // Shrink
+          transformOrigin: 'bottom left',
+          duration: 0.5,          // Swift 0.5s duration relative to timeline
+          ease: 'power1.out'
+        }, 0);
+
         // --- Loop through sections ---
         sectionsConfig.forEach((section, index) => {
           const sectionId = `#section-${index}`;
@@ -141,9 +156,12 @@ export default function HomePage() {
           tl.fromTo(`${sectionId}-title ul li`, { y: 10, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 1 }, `section${index}+=0.5`);
 
           // Transition color
-          tl.set(background.current, { '--color-bottom': section.color, '--angle': '170deg' }, `section${index}`);
-          tl.to(background.current, { '--angle': '180deg', duration: 2 }, `section${index}`);
-          tl.set(background.current, { '--color-top': section.color });
+          // Smooth Gradient Transition (Mobile)
+          tl.to(background.current, {
+            '--color-top': section.gradient.top,
+            '--color-bottom': section.gradient.bottom,
+            duration: 2
+          }, `section${index}`);
 
           // Fade OUT
           if (index < sectionsConfig.length) {
@@ -172,9 +190,9 @@ export default function HomePage() {
       <style jsx global>{`
         .background-wipe {
           --color-top: #FF4D00;
-          --color-bottom: #FF4D00;
-          --angle: 180deg;
-          background: linear-gradient(var(--angle), var(--color-top) 0%, var(--color-top) 50%, var(--color-bottom) 50%, var(--color-bottom) 100%);
+          --color-bottom: #990000;
+          --angle: 181deg;
+          background: linear-gradient(var(--angle), var(--color-top), var(--color-bottom));
         }
       `}</style>
 
