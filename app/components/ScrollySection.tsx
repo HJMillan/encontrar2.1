@@ -42,7 +42,7 @@ export default function ScrollySection({ section, index, priority }: ScrollySect
     return (
         <div className="absolute inset-0">
             {/* Text Column */}
-            <div id={`section-${index}-title`} className={`absolute left-0 top-0 h-full w-full md:w-1/2 flex items-center justify-center p-8 md:p-16 ${section.textColor || 'text-white'}`}>
+            <div id={`section-${index}-title`} className={`absolute left-0 top-0 h-1/2 md:h-full w-full md:w-1/2 flex items-center justify-center p-8 md:p-16 ${section.textColor || 'text-white'}`}>
                 <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-4 max-w-lg">
                     <h2 className="text-4xl md:text-6xl font-bold">{section.title}</h2>
                     {section.subtitle && <h3 className="text-2xl font-semibold opacity-90 uppercase tracking-widest">{section.subtitle}</h3>}

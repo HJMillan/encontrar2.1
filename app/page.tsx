@@ -210,7 +210,7 @@ export default function HomePage() {
               <ScrollySection key={index} section={section} index={index} priority={index === 0} />
             ))}
             <div className="footer-title absolute inset-0 flex flex-col items-center justify-end text-center opacity-0 pb-32 space-y-8">
-              <h2 className="text-8xl md:text-5xl font-bold">EMPEZÁ HOY.</h2>
+              <h2 className="text-4xl md:text-6xl font-bold">EMPEZÁ HOY.</h2>
               <div className="flex flex-col md:flex-row gap-4">
                 <StoreButton store="apple" variant="light" />
                 <StoreButton store="google" variant="outline" />

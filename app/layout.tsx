@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Unbounded } from "next/font/google";
+import { Lexend } from "next/font/google";
 import "./globals.css";
 
-const unbounded = Unbounded({
+const lexend = Lexend({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-unbounded",
+  variable: "--font-lexend",
 });
 
 export const metadata: Metadata = {
@@ -34,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={unbounded.variable}>{children}</body>
+      <body className={lexend.variable}>{children}</body>
     </html>
   );
 }
