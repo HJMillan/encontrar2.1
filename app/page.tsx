@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -8,6 +8,7 @@ import Logo from './components/Logo';
 import ScrollySection from './components/ScrollySection';
 import ScrollToTop from './components/ScrollToTop';
 import StoreButton from './components/StoreButton';
+import Loader from './components/Loader';
 import { sectionsConfig } from './data';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -16,6 +17,19 @@ export default function HomePage() {
   const component = useRef<HTMLDivElement>(null);
   const scrolly = useRef<HTMLElement>(null);
   const bgRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fake Loading Simulation (remove in prod if using real asset loading detection)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      ScrollTrigger.refresh(); // Ensure GSAP calcs are fresh after reveal
+    }, 500); // 0.5s buffer
+    return () => clearTimeout(timer);
+  }, []);
+
+
+
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -165,6 +179,8 @@ export default function HomePage() {
         tl.to('#footer-logo', { opacity: 1, duration: 1 }, 'footer');
       });
 
+
+
       return () => {
         ctx.revert();
       };
@@ -173,6 +189,7 @@ export default function HomePage() {
 
   return (
     <div ref={component}>
+      <Loader isLoading={isLoading} />
 
 
       {/* Navigation Dots (Desktop Only) */}
@@ -216,12 +233,13 @@ export default function HomePage() {
           {/* 2. Content Layer (Text & Images) */}
           <div className="absolute inset-0 z-10">
             <h1 className="hero-title absolute inset-x-0 top-1/3 text-center text-5xl md:text-7xl font-black z-30">
-              LA LIBERTAD DE<br />DEJARLOS IR
+              LA LIBERTAD DE<br />DEJARLOS IR...
             </h1>
             {sectionsConfig.map((section, index) => (
               <ScrollySection key={index} section={section} index={index} priority={index === 0} />
             ))}
             <div className="footer-title absolute inset-0 flex flex-col items-center justify-end text-center opacity-0 pb-32 space-y-8">
+              <h2 className="text-4xl md:text-6xl font-bold mb-40 ">LA SEGURIDAD DE SABER DONDE ESTÁN</h2>
               <h2 className="text-4xl md:text-6xl font-bold">EMPEZÁ HOY.</h2>
               <div className="flex flex-col md:flex-row gap-4">
                 <StoreButton store="apple" variant="light" />

@@ -1,20 +1,6 @@
 import React from 'react';
 import Image, { StaticImageData } from 'next/image';
-import { LucideIcon } from 'lucide-react';
-
-interface Feature {
-    text: string;
-    icon: LucideIcon;
-}
-
-interface SectionData {
-    title: string;
-    subtitle?: string;
-    image: StaticImageData | string;
-    color: string;
-    textColor?: string;
-    features: Feature[];
-}
+import { SectionData } from '../types';
 
 interface ScrollySectionProps {
     section: SectionData;
