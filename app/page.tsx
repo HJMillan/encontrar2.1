@@ -15,20 +15,13 @@ gsap.registerPlugin(ScrollTrigger);
 export default function HomePage() {
   const component = useRef<HTMLDivElement>(null);
   const scrolly = useRef<HTMLElement>(null);
-  const background = useRef<HTMLDivElement>(null);
+  const bgRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
 
-      // --- Set initial colors ---
-      const initialTop = '#ff4d00';
-      const initialBottom = '#990000';
-      gsap.set(background.current, {
-        '--color-top': initialTop,
-        '--color-bottom': initialBottom,
-        '--angle': '181deg',
-      });
+
 
       // --- Hero Cinematic Entrance (Global Load) ---
       gsap.fromTo('.hero-title', { y: 100, opacity: 0, scale: 0.9 }, { y: 0, opacity: 1, scale: 1, duration: 1.5, ease: 'power3.out', delay: 0.2 });
@@ -67,11 +60,10 @@ export default function HomePage() {
 
           // THE CRITICAL DIAGONAL WIPE TRANSITION
           // Smooth Gradient Transition
-          tl.to(background.current, {
-            '--color-top': section.gradient.top,
-            '--color-bottom': section.gradient.bottom,
-            duration: 2
-          }, `section${index}`);
+          // Smooth Cross-fade Transition
+          if (bgRefs.current[index]) {
+            tl.to(bgRefs.current[index], { opacity: 1, duration: 2 }, `section${index}`);
+          }
 
           // Pincer animation OUT
           if (index < sectionsConfig.length) {
@@ -84,9 +76,7 @@ export default function HomePage() {
 
         // --- Footer Transition ---
         tl.to('.gps-device', { opacity: 0, scale: 0, duration: 2 }, 'footer');
-        tl.set(background.current, { '--color-bottom': '#111', '--angle': '170deg' }, 'footer');
-        tl.to(background.current, { '--angle': '180deg', duration: 2 }, 'footer');
-        tl.set(background.current, { '--color-top': '#111' });
+
         tl.fromTo('.footer-title', { opacity: 0, y: 100 }, { opacity: 1, y: 0, duration: 2 }, 'footer');
 
         // Fluid Logo Transition (Desktop)
@@ -156,12 +146,10 @@ export default function HomePage() {
           tl.fromTo(`${sectionId}-title ul li`, { y: 10, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 1 }, `section${index}+=0.5`);
 
           // Transition color
-          // Smooth Gradient Transition (Mobile)
-          tl.to(background.current, {
-            '--color-top': section.gradient.top,
-            '--color-bottom': section.gradient.bottom,
-            duration: 2
-          }, `section${index}`);
+          // Smooth Cross-fade Transition (Mobile)
+          if (bgRefs.current[index]) {
+            tl.to(bgRefs.current[index], { opacity: 1, duration: 2 }, `section${index}`);
+          }
 
           // Fade OUT
           if (index < sectionsConfig.length) {
@@ -172,9 +160,7 @@ export default function HomePage() {
 
         // --- Footer Transition ---
         tl.to('.gps-device', { opacity: 0, scale: 0, duration: 2 }, 'footer');
-        tl.set(background.current, { '--color-bottom': '#111', '--angle': '170deg' }, 'footer');
-        tl.to(background.current, { '--angle': '180deg', duration: 2 }, 'footer');
-        tl.set(background.current, { '--color-top': '#111' });
+
         tl.fromTo('.footer-title', { opacity: 0, y: 100 }, { opacity: 1, y: 0, duration: 2 }, 'footer');
         tl.to('#footer-logo', { opacity: 1, duration: 1 }, 'footer');
       });
@@ -187,14 +173,7 @@ export default function HomePage() {
 
   return (
     <div ref={component}>
-      <style jsx global>{`
-        .background-wipe {
-          --color-top: #FF4D00;
-          --color-bottom: #990000;
-          --angle: 181deg;
-          background: linear-gradient(var(--angle), var(--color-top), var(--color-bottom));
-        }
-      `}</style>
+
 
       {/* Navigation Dots (Desktop Only) */}
       <div className="fixed right-8 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-4">
@@ -217,7 +196,22 @@ export default function HomePage() {
         {/* ... */}
         <section ref={scrolly} className="h-screen w-full relative">
           {/* 1. Background Layer */}
-          <div ref={background} className="background-wipe absolute inset-0 z-0" />
+          {/* 1. Background Layers (Stacked for Cross-fade) */}
+          {/* Base Layer: Hero (Orange) */}
+          <div
+            className="absolute inset-0 z-0"
+            style={{ background: 'linear-gradient(181deg, #ff4d00, #990000)' }}
+          />
+
+          {/* Overlay Layers: Sections */}
+          {sectionsConfig.map((section, index) => (
+            <div
+              key={`bg-${index}`}
+              ref={(el) => { bgRefs.current[index] = el; }}
+              className="absolute inset-0 z-0 opacity-0"
+              style={{ background: `linear-gradient(181deg, ${section.gradient.top}, ${section.gradient.bottom})` }}
+            />
+          ))}
 
           {/* 2. Content Layer (Text & Images) */}
           <div className="absolute inset-0 z-10">
