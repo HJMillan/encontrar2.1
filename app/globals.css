@@ -1,11 +1,32 @@
 @import "tailwindcss";
 
+@theme {
+  --color-brand-fucsia: #ff0088;
+  --color-brand-azul: #005bef;
+  --color-brand-negro: #000000;
+
+  --color-bg-hero: #F8F9FA;
+  --color-bg-warm: #FAF7F2;
+  --color-bg-cool: #F0F7F4;
+  --color-bg-tech: #EEF2F6;
+  --color-bg-visual-soft: #F6F0F8;
+
+  --color-text-muted: #9CA3AF;
+}
+
+html {
+  overscroll-behavior: none;
+  height: 100%;
+}
+
 body {
-  background-color: #111;
-  color: white;
+  background-color: var(--color-bg-hero);
+  color: #111;
   font-family: var(--font-lexend), sans-serif;
   overflow-x: hidden;
   width: 100%;
+  overscroll-behavior: none;
+  min-height: 100%;
 }
 
 /* Ripple Energy Animation (Shockwave) */

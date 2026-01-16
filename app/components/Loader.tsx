@@ -1,33 +1,58 @@
 "use client";
 
-import React from 'react';
-import Image from 'next/image';
+import React, { useRef } from 'react';
+import { gsap } from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 interface LoaderProps {
-    isLoading: boolean;
+    onFinish: () => void;
 }
 
-export default function Loader({ isLoading }: LoaderProps) {
+export default function Loader({ onFinish }: LoaderProps) {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const textRef = useRef<HTMLHeadingElement>(null);
+
+    useGSAP(() => {
+        const tl = gsap.timeline({
+            onComplete: () => {
+                onFinish();
+            }
+        });
+
+        // 1. Initial State
+        gsap.set(textRef.current, { opacity: 0, y: 20 });
+
+        // 2. Text Fade In
+        tl.to(textRef.current, {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power2.out"
+        });
+
+        // 3. Pause for reading
+        tl.to({}, { duration: 0.5 });
+
+        // 4. The Curtain Reveal (Move Up)
+        tl.to(containerRef.current, {
+            yPercent: -100,
+            duration: 1.2,
+            ease: "power4.inOut"
+        });
+
+    }, { scope: containerRef });
+
     return (
         <div
-            className={`fixed inset-0 z-[100] bg-black flex items-center justify-center transition-opacity duration-700 ease-out ${isLoading ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-                }`}
+            ref={containerRef}
+            className="fixed inset-0 z-[100] bg-brand-negro flex items-center justify-center pointer-events-auto"
         >
-            <div className="relative flex flex-col items-center">
-                {/* Logo with Pulse Effect */}
-                <div className="relative w-32 h-32 md:w-48 md:h-48 animate-pulse mb-8">
-                    <Image
-                        src="/img/logo.png"
-                        alt="Loading..."
-                        fill
-                        className="object-contain"
-                        priority
-                    />
-                </div>
-
-                {/* Spinner */}
-                <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin" />
-            </div>
+            <h1
+                ref={textRef}
+                className="text-white text-sm md:text-base tracking-[0.2em] uppercase font-light opacity-0"
+            >
+                La libertad de dejarlos ir...
+            </h1>
         </div>
     );
 }

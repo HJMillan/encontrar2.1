@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Lexend } from "next/font/google";
 import "./globals.css";
+import SmoothScroll from "./components/SmoothScroll";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -34,7 +35,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={lexend.variable}>{children}</body>
+      <body className={lexend.variable}>
+        <SmoothScroll>
+          {children}
+        </SmoothScroll>
+      </body>
     </html>
   );
 }

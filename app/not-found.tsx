@@ -2,7 +2,7 @@
 
 export default function NotFound() {
     return (
-        <div className="min-h-screen bg-[#111] flex flex-col items-center justify-center text-white p-4 overflow-hidden relative">
+        <div className="min-h-screen bg-brand-negro flex flex-col items-center justify-center text-white p-4 overflow-hidden relative">
 
             {/* Radar Animation (Centerpiece) */}
             <div className="relative w-64 h-64 md:w-96 md:h-96 flex items-center justify-center mb-8">

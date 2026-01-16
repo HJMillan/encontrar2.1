@@ -1,5 +1,9 @@
-import React from 'react';
+"use client";
+
+import React, { useRef } from 'react';
 import Image, { StaticImageData } from 'next/image';
+import { gsap } from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { SectionData } from '../types';
 
 interface ScrollySectionProps {
@@ -8,25 +12,84 @@ interface ScrollySectionProps {
     priority?: boolean;
 }
 
+// Synced with page.tsx
+const SCROLL_PER_SECTION = 1500;
+
 export default function ScrollySection({ section, index, priority }: ScrollySectionProps) {
-    // Calculate specific border-radius for the "rotating angle" effect based on index
-    // Calculate specific border-radius for the "Organic Asymmetry" effect (Squircle-like)
-    // We avoid sharp 0px corners, using 60px as the "sharpest" point for a premium feel.
-    let radius = '200px 200px 200px 200px';
-    if (index % 4 === 0) radius = '60px 200px 200px 200px'; // TL "Nose"
-    if (index % 4 === 1) radius = '200px 60px 200px 200px'; // TR "Nose"
-    if (index % 4 === 2) radius = '200px 200px 60px 200px'; // BR "Nose"
-    if (index % 4 === 3) radius = '200px 200px 200px 60px'; // BL "Nose"
+    const containerRef = useRef<HTMLDivElement>(null);
+    const cardRef = useRef<HTMLDivElement>(null);
+    const imageRef = useRef<HTMLImageElement>(null);
+
+    // Initial "Neutral" State (Rounded Rect)
+    const initialRadius = '24px';
+
+    // Target "Nose" State (Asymmetric)
+    // TL, TR, BR, BL
+    let targetRadius = '40px 12px 12px 12px'; // Default (Index 0 / Mod 0 - Top Left)
+    if (index % 4 === 1) targetRadius = '12px 40px 12px 12px'; // Top Right
+    if (index % 4 === 2) targetRadius = '12px 12px 40px 12px'; // Bottom Right
+    if (index % 4 === 3) targetRadius = '12px 12px 12px 40px'; // Bottom Left
+
+    useGSAP(() => {
+        if (!cardRef.current) return;
+
+        // Since the sections are pinned in a single container, we calculate 
+        // the "Virtual Scroll" position where this specific section becomes active.
+        const startOffset = index * SCROLL_PER_SECTION;
+
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: 'body', // Global trigger due to pinning
+                start: `top+=${startOffset} top`, // Virtual Start
+                end: `+=1000`, // Duration of the "active" phase
+                scrub: true,
+            }
+        });
+
+        // 1. Morphing: Neutral -> Nose -> Neutral
+        tl.fromTo(cardRef.current,
+            { borderRadius: initialRadius, border: '1px solid rgba(255,255,255,0.2)' },
+            {
+                borderRadius: targetRadius,
+                borderColor: 'rgba(255,255,255,0.6)',
+                boxShadow: '0 0 30px rgba(255,255,255,0.2)',
+                duration: 1,
+                ease: 'power2.out'
+            },
+            0 // Start at beginning
+        );
+
+        // 2. Parallax: Move Image inside Container
+        // We use position '0' to run it parallel with the morphing
+        if (imageRef.current) {
+            tl.fromTo(imageRef.current,
+                { yPercent: -15 },
+                { yPercent: 15, ease: 'none', duration: 2 }, // Double duration to span the whole interaction (morph in + out)
+                0
+            );
+        }
+
+        // Return to neutral at the end of the timeline/scroll
+        tl.to(cardRef.current, {
+            borderRadius: initialRadius,
+            borderColor: 'rgba(255,255,255,0.2)',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.1)',
+            duration: 1,
+            ease: 'power2.in'
+        }, 1); // Starts after step 1 finishes (at 50% of total if we consider the previous duration 1)
+
+    }, { scope: containerRef, dependencies: [index] });
 
     // Determine colors based on textColor prop (defaulting to text-white if undefined)
-    const isTextBlack = section.textColor === 'text-black';
-    const featureBgClass = isTextBlack ? 'bg-black/10 group-hover:bg-black/20' : 'bg-white/20 group-hover:bg-white/40';
+    const isTextBlack = section.textColor === 'text-brand-negro' || section.textColor?.includes('brand-azul') || section.textColor?.includes('brand-fucsia');
+    // Increase contrast for icons on light backgrounds
+    const featureBgClass = 'bg-white/40 group-hover:bg-white/60 text-current';
     const buttonClass = isTextBlack
-        ? 'border-black text-black hover:bg-black hover:text-white'
-        : 'border-white text-white hover:bg-white hover:text-black';
+        ? 'border-brand-negro text-brand-negro hover:bg-brand-negro hover:text-white'
+        : 'border-white text-white hover:bg-white hover:text-brand-negro';
 
     return (
-        <div className="absolute inset-0">
+        <div ref={containerRef} className="absolute inset-0">
             {/* Text Column */}
             <div id={`section-${index}-title`} className={`absolute left-0 top-0 h-1/2 md:h-full w-full md:w-1/2 flex items-center justify-center p-8 md:p-16 ${section.textColor || 'text-white'}`}>
                 <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-4 max-w-lg">
@@ -61,10 +124,14 @@ export default function ScrollySection({ section, index, priority }: ScrollySect
             <div id={`section-${index}-image`} className="absolute left-0 top-1/2 md:left-auto md:right-0 md:top-0 h-1/2 w-full md:h-full md:w-1/2 flex items-center justify-center p-6">
                 {/* Glass Frame Wrapper */}
                 <div
-                    className="relative w-64 h-80 md:w-[500px] md:h-[500px] p-3 bg-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.2)] ring-1 ring-white/20 backdrop-blur-sm transition-all duration-700 ease-out hover:scale-[1.02]"
-                    style={{ borderRadius: radius }}
+                    ref={cardRef}
+                    // Initial classes (will be seemingly overridden by GSAP but good for SSR/No-JS safety)
+                    // Added overflow-hidden for parallax masking
+                    className="relative w-64 h-80 md:w-[500px] md:h-[500px] p-3 bg-white/40 shadow-[0_20px_60px_rgba(0,0,0,0.1)] ring-1 ring-white/40 backdrop-blur-md transition-all duration-700 ease-out hover:scale-[1.02] overflow-hidden"
+                    style={{ borderRadius: initialRadius }}
                 >
                     <Image
+                        ref={imageRef as any} // Cast if ref type mismatch with Next Image
                         src={section.image}
                         alt={section.title}
                         fill
@@ -73,8 +140,9 @@ export default function ScrollySection({ section, index, priority }: ScrollySect
                         // Handle string vs StaticImageData for placeholder
                         blurDataURL={typeof section.image === 'string' ? undefined : (section.image as StaticImageData).blurDataURL}
                         priority={!!priority}
-                        style={{ borderRadius: radius }}
-                        className="object-cover p-3"
+                        style={{ borderRadius: 'inherit' }} // Inherit parent's morphing radius
+                        // Added scale-125 for parallax movement room
+                        className="object-cover p-3 scale-125"
                     />
                 </div>
             </div>

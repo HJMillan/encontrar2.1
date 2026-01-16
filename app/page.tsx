@@ -1,256 +1,245 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { gsap } from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+// Components
 import Logo from './components/Logo';
 import ScrollySection from './components/ScrollySection';
 import ScrollToTop from './components/ScrollToTop';
 import StoreButton from './components/StoreButton';
 import Loader from './components/Loader';
+import { BackgroundLayers } from './components/BackgroundLayers';
+import { NavigationDots } from './components/NavigationDots';
 import { sectionsConfig } from './data';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Constants (Clean Code / No Magic Numbers)
+const SCROLL_PER_SECTION = 1500;
+const NAV_DOT_SPACING_REM = 1.75;
+
 export default function HomePage() {
-  const component = useRef<HTMLDivElement>(null);
-  const scrolly = useRef<HTMLElement>(null);
-  const bgRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const container = useRef<HTMLDivElement>(null);
+  const scrollyRef = useRef<HTMLElement>(null);
+  const bgRefs = useRef<HTMLDivElement[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState(0);
 
-  // Fake Loading Simulation (remove in prod if using real asset loading detection)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      ScrollTrigger.refresh(); // Ensure GSAP calcs are fresh after reveal
-    }, 500); // 0.5s buffer
-    return () => clearTimeout(timer);
-  }, []);
+  // Loader Logic handled via GSAP Callback
+  const handleLoaderFinish = () => {
+    setIsLoading(false);
+    // Refresh ScrollTrigger to ensure pinned elements positions are correct after the "curtain" lifts
+    // and DOM potentially shifts (though z-index overlay shouldn't shift layout, it's safer)
+    setTimeout(() => ScrollTrigger.refresh(), 100);
+  };
 
+  useGSAP(() => {
+    if (isLoading) return;
 
+    const mm = gsap.matchMedia();
 
+    // --- Hero Cinematic Entrance ---
+    gsap.fromTo('.hero-title',
+      { y: 100, opacity: 0, scale: 0.9 },
+      { y: 0, opacity: 1, scale: 1, duration: 1.5, ease: 'power3.out', delay: 0.2 }
+    );
 
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
-
-
-
-      // --- Hero Cinematic Entrance (Global Load) ---
-      gsap.fromTo('.hero-title', { y: 100, opacity: 0, scale: 0.9 }, { y: 0, opacity: 1, scale: 1, duration: 1.5, ease: 'power3.out', delay: 0.2 });
-
-      // Desktop Animations
-      mm.add("(min-width: 768px)", () => {
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: scrolly.current,
-            start: 'top top',
-            end: `+=${sectionsConfig.length * 1500}`,
-            scrub: 1,
-            pin: true,
-          },
-        });
-
-        // --- Hero Scroll Effect ---
-        // Use fromTo to strictly define the start state (1) and end state (0)
-        // This prevents race conditions with the initial entrance animation
-        tl.fromTo('.hero-title', { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.8, duration: 1, ease: 'power2.in' }, '+=1');
-
-        // --- Loop through sections to create transitions ---
-        sectionsConfig.forEach((section, index) => {
-          const sectionId = `#section-${index}`;
-
-          // Pincer animation IN
-          tl.fromTo(`${sectionId}-title`, { xPercent: -100, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 2 }, `section${index}`);
-          tl.fromTo(`${sectionId}-image`, { xPercent: 100, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 2 }, `section${index}`);
-
-          // Staggered Features Animation
-          tl.fromTo(`${sectionId}-title ul li`, { x: -20, opacity: 0 }, { x: 0, opacity: 1, stagger: 0.1, duration: 1 }, `section${index}+=1`);
-
-          // Sliding Pill Animation
-          // Move to the current index position (0, 1.75rem, 3.5rem, etc.)
-          tl.to('#nav-indicator', { y: `${index * 1.75}rem`, duration: 1, ease: 'power2.out' }, `section${index}`);
-
-          // THE CRITICAL DIAGONAL WIPE TRANSITION
-          // Smooth Gradient Transition
-          // Smooth Cross-fade Transition
-          if (bgRefs.current[index]) {
-            tl.to(bgRefs.current[index], { opacity: 1, duration: 2 }, `section${index}`);
-          }
-
-          // Pincer animation OUT
-          if (index < sectionsConfig.length) {
-            tl.to(`${sectionId}-title`, { xPercent: -100, opacity: 0, duration: 2 }, `section${index}+=3`);
-            tl.to(`${sectionId}-image`, { xPercent: 100, opacity: 0, duration: 2 }, `section${index}+=3`);
-            tl.to(`${sectionId}-title`, { xPercent: -100, opacity: 0, duration: 2 }, `section${index}+=3`);
-            tl.to(`${sectionId}-image`, { xPercent: 100, opacity: 0, duration: 2 }, `section${index}+=3`);
-          }
-        });
-
-        // --- Footer Transition ---
-        tl.to('.gps-device', { opacity: 0, scale: 0, duration: 2 }, 'footer');
-
-        tl.fromTo('.footer-title', { opacity: 0, y: 100 }, { opacity: 1, y: 0, duration: 2 }, 'footer');
-
-        // Fluid Logo Transition (Desktop)
-        // Fluid Logo Transition (Desktop) - GPU Accelerated
-        // Moves from center (50%) to left (approx 8%) using Transforms (42vw diff)
-        // Moves from bottom (32px) to approx 25vh using Y transform
-        tl.to('#app-logo', {
-          x: '-42vw',       // Move left
-          y: '-22vh',       // Move up
-          scale: 0.7,       // Shrink
-          opacity: 0,       // Fade out
-          duration: 1.5,
-          ease: 'power2.inOut'
-        }, 'footer');
-
-        // Reveal static footer logo
-        tl.to('#footer-logo', { opacity: 1, duration: 0.5 }, 'footer+=1');
+    // Desktop Animations (Pinned Storytelling)
+    mm.add("(min-width: 768px)", () => {
+      // Main Timeline linked to Scroll
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: scrollyRef.current,
+          start: 'top top',
+          end: `+=${sectionsConfig.length * SCROLL_PER_SECTION}`,
+          scrub: 1,
+          pin: true,
+        },
       });
 
-      // Mobile Animations
-      mm.add("(max-width: 767px)", () => {
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: scrolly.current,
-            start: 'top top',
-            end: `+=${sectionsConfig.length * 1500}`,
-            scrub: 1,
-            pin: true,
-          },
-        });
+      // 1. Hero Exit
+      tl.fromTo('.hero-title', { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.8, duration: 1, ease: 'power2.in' }, '+=1');
 
-        // --- Hero Animation ---
-        tl.fromTo('.hero-title', { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.8, duration: 1 }, '+=0.5');
+      // 2. Section Loop
+      sectionsConfig.forEach((section, index) => {
+        const sectionId = `#section-${index}`;
+        const timelineLabel = `section${index}`;
 
-        // --- Mobile Progress Bar ---
-        gsap.to('.mobile-progress-bar', {
-          scaleX: 1,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: scrolly.current,
-            start: 'top top',
-            end: 'bottom bottom',
-            scrub: 0
+        // Content Entrance (Pincer Effect)
+        tl.fromTo(`${sectionId}-title`, { xPercent: -100, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 2 }, timelineLabel);
+        tl.fromTo(`${sectionId}-image`, { xPercent: 100, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 2 }, timelineLabel);
+
+        // Staggered Features
+        tl.fromTo(`${sectionId}-title ul li`, { x: -20, opacity: 0 }, { x: 0, opacity: 1, stagger: 0.1, duration: 1 }, `${timelineLabel}+=1`);
+
+        // Navigation Pill
+        tl.to('#nav-indicator', { y: `${index * NAV_DOT_SPACING_REM}rem`, duration: 1, ease: 'power2.out' }, timelineLabel);
+
+        // Background Atmosphere Transition (Cross-fade)
+        // Verified: Uses GSAP opacity scrubbing on the absolute layer. No CSS conflicts.
+        if (bgRefs.current[index]) {
+          tl.fromTo(bgRefs.current[index],
+            { opacity: 0 },
+            { opacity: 1, duration: 2, ease: 'none' },
+            timelineLabel
+          );
+        }
+
+        // UX State: Update Active Section for Navigation Dots
+        // Using a lightweight, separate ScrollTrigger for state management to avoid scrubbing weirdness
+        ScrollTrigger.create({
+          trigger: 'body',
+          start: `top+=${index * SCROLL_PER_SECTION} top`,
+          end: `+=${SCROLL_PER_SECTION}`,
+          onToggle: (self) => {
+            if (self.isActive) setActiveSection(index);
           }
         });
 
-        // --- Mobile Logo Animation (Integrated into Main Timeline) ---
-        // Places it at the very start (0) so it happens immediately as scrolling begins
-        tl.to('#app-logo', {
-          left: '2rem',           // Move to left padding
-          xPercent: 0,            // Remove centering
-          scale: 0.5,             // Shrink
-          transformOrigin: 'bottom left',
-          duration: 0.5,          // Swift 0.5s duration relative to timeline
-          ease: 'power1.out'
-        }, 0);
-
-        // --- Loop through sections ---
-        sectionsConfig.forEach((section, index) => {
-          const sectionId = `#section-${index}`;
-
-          // Simple Fade/Slide IN (Vertical)
-          tl.fromTo(`${sectionId}-title`, { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 2 }, `section${index}`);
-          tl.fromTo(`${sectionId}-image`, { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 2 }, `section${index}`);
-
-          // Staggered Features Animation (Mobile)
-          tl.fromTo(`${sectionId}-title ul li`, { y: 10, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 1 }, `section${index}+=0.5`);
-
-          // Transition color
-          // Smooth Cross-fade Transition (Mobile)
-          if (bgRefs.current[index]) {
-            tl.to(bgRefs.current[index], { opacity: 1, duration: 2 }, `section${index}`);
-          }
-
-          // Fade OUT
-          if (index < sectionsConfig.length) {
-            tl.to(`${sectionId}-title`, { opacity: 0, duration: 2 }, `section${index}+=3`);
-            tl.to(`${sectionId}-image`, { opacity: 0, duration: 2 }, `section${index}+=3`);
-          }
-        });
-
-        // --- Footer Transition ---
-        tl.to('.gps-device', { opacity: 0, scale: 0, duration: 2 }, 'footer');
-
-        tl.fromTo('.footer-title', { opacity: 0, y: 100 }, { opacity: 1, y: 0, duration: 2 }, 'footer');
-        tl.to('#footer-logo', { opacity: 1, duration: 1 }, 'footer');
+        // Content Exit (Pincer Out or Standard Fade)
+        // Must happen before the next section enters fully
+        if (index < sectionsConfig.length) {
+          const exitTime = `${timelineLabel}+=3`;
+          tl.to(`${sectionId}-title`, { xPercent: -100, opacity: 0, duration: 2 }, exitTime);
+          tl.to(`${sectionId}-image`, { xPercent: 100, opacity: 0, duration: 2 }, exitTime);
+        }
       });
 
+      // 3. Footer Entrance
+      const footerLabel = 'footer';
+      tl.to('.gps-device', { opacity: 0, scale: 0, duration: 2 }, footerLabel);
+      tl.fromTo('.footer-title', { opacity: 0, y: 100 }, { opacity: 1, y: 0, duration: 2 }, footerLabel);
 
+      // Fluid Logo Transition
+      tl.to('#app-logo', {
+        x: '-42vw',
+        y: '-22vh',
+        scale: 0.7,
+        opacity: 0,
+        duration: 1.5,
+        ease: 'power2.inOut'
+      }, footerLabel);
 
-      return () => {
-        ctx.revert();
-      };
-    }, component);
-  }, []);
+      // Reveal static footer logo
+      tl.to('#footer-logo', { opacity: 1, duration: 0.5 }, `${footerLabel}+=1`);
+    });
+
+    // Mobile Animations (Vertical Flow)
+    mm.add("(max-width: 767px)", () => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: scrollyRef.current,
+          start: 'top top',
+          end: `+=${sectionsConfig.length * SCROLL_PER_SECTION}`,
+          scrub: 1,
+          pin: true,
+        },
+      });
+
+      // Hero Exit
+      tl.fromTo('.hero-title', { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.8, duration: 1 }, '+=0.5');
+
+      // Progress Bar
+      gsap.to('.mobile-progress-bar', {
+        scaleX: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: scrollyRef.current,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0
+        }
+      });
+
+      // Logo Animation
+      tl.to('#app-logo', {
+        left: '2rem',
+        xPercent: 0,
+        scale: 0.5,
+        transformOrigin: 'bottom left',
+        duration: 0.5,
+        ease: 'power1.out'
+      }, 0);
+
+      // Section Loop
+      sectionsConfig.forEach((section, index) => {
+        const sectionId = `#section-${index}`;
+        const timelineLabel = `section${index}`;
+
+        // Vertical Entrance
+        tl.fromTo(`${sectionId}-title`, { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 2 }, timelineLabel);
+        tl.fromTo(`${sectionId}-image`, { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 2 }, timelineLabel);
+
+        // Features (Stagger)
+        tl.fromTo(`${sectionId}-title ul li`, { y: 10, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 1 }, `${timelineLabel}+=0.5`);
+
+        // Background Atmosphere (Mobile)
+        if (bgRefs.current[index]) {
+          tl.fromTo(bgRefs.current[index],
+            { opacity: 0 },
+            { opacity: 1, duration: 2, ease: 'none' },
+            timelineLabel
+          );
+        }
+
+        // Exit
+        const exitTime = `${timelineLabel}+=3`;
+        tl.to(`${sectionId}-title`, { opacity: 0, duration: 2 }, exitTime);
+        tl.to(`${sectionId}-image`, { opacity: 0, duration: 2 }, exitTime);
+      });
+
+      // Footer
+      const footerLabel = 'footer';
+      tl.to('.gps-device', { opacity: 0, scale: 0, duration: 2 }, footerLabel);
+      tl.fromTo('.footer-title', { opacity: 0, y: 100 }, { opacity: 1, y: 0, duration: 2 }, footerLabel);
+      tl.to('#footer-logo', { opacity: 1, duration: 1 }, footerLabel);
+    });
+
+  }, { scope: container, dependencies: [isLoading] });
 
   return (
-    <div ref={component}>
-      <Loader isLoading={isLoading} />
+    <div ref={container} className="relative w-full overflow-hidden">
+      {isLoading && <Loader onFinish={handleLoaderFinish} />}
 
-
-      {/* Navigation Dots (Desktop Only) */}
-      <div className="fixed right-8 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-4">
-        {/* Sliding Indicator */}
-        <div id="nav-indicator" className="absolute top-0 left-0 w-3 h-3 rounded-full bg-white shadow-[0_0_15px_rgba(255,255,255,0.8)] z-10" />
-
-        {/* Static Background Dots */}
-        {sectionsConfig.map((_, idx) => (
-          <div key={idx} className="w-3 h-3 rounded-full bg-white opacity-20" />
-        ))}
-      </div>
-
+      <NavigationDots sections={sectionsConfig} activeIndex={activeSection} />
       <Logo />
       <ScrollToTop />
 
-      {/* Mobile Progress Bar (Refreshed) - High Visibility Gradient */}
-      <div className="fixed top-0 left-0 h-1 bg-gradient-to-r from-purple-600 to-orange-500 z-50 mobile-progress-bar md:hidden origin-left scale-x-0 w-full shadow-md" />
-
       <main>
-        {/* ... */}
-        <section ref={scrolly} className="h-screen w-full relative">
-          {/* 1. Background Layer */}
-          {/* 1. Background Layers (Stacked for Cross-fade) */}
-          {/* Base Layer: Hero (Orange) */}
-          <div
-            className="absolute inset-0 z-0"
-            style={{ background: 'linear-gradient(181deg, #ff4d00, #990000)' }}
-          />
+        <section ref={scrollyRef} className="h-screen w-full relative">
 
-          {/* Overlay Layers: Sections */}
-          {sectionsConfig.map((section, index) => (
-            <div
-              key={`bg-${index}`}
-              ref={(el) => { bgRefs.current[index] = el; }}
-              className="absolute inset-0 z-0 opacity-0"
-              style={{ background: `linear-gradient(181deg, ${section.gradient.top}, ${section.gradient.bottom})` }}
-            />
-          ))}
+          {/* 1. Background Layers (Z-0) */}
+          {/* Managed by GSAP opacity transitions. No CSS transitions allowed. */}
+          <BackgroundLayers ref={bgRefs} sections={sectionsConfig} />
 
-          {/* 2. Content Layer (Text & Images) */}
-          <div className="absolute inset-0 z-10">
-            <h1 className="hero-title absolute inset-x-0 top-1/3 text-center text-5xl md:text-7xl font-black z-30">
+          {/* 2. Content Layer (Z-10) */}
+          <div className="absolute inset-0 z-10 pointer-events-none">
+            <h1 className="hero-title absolute inset-x-0 top-1/3 text-center text-5xl md:text-7xl font-black z-30 text-brand-negro">
               LA LIBERTAD DE<br />DEJARLOS IR...
             </h1>
+
             {sectionsConfig.map((section, index) => (
-              <ScrollySection key={index} section={section} index={index} priority={index === 0} />
+              <div key={section.title} className="pointer-events-auto">
+                <ScrollySection section={section} index={index} priority={index === 0} />
+              </div>
             ))}
-            <div className="footer-title absolute inset-0 flex flex-col items-center justify-end text-center opacity-0 pb-32 space-y-8">
-              <h2 className="text-4xl md:text-6xl font-bold mb-40 ">LA SEGURIDAD DE SABER DONDE ESTÁN</h2>
-              <h2 className="text-4xl md:text-6xl font-bold">EMPEZÁ HOY.</h2>
+
+            <div className="footer-title absolute inset-0 flex flex-col items-center justify-end text-center opacity-0 pb-32 space-y-8 pointer-events-auto">
+              <h2 className="text-4xl md:text-6xl font-bold mb-40 text-brand-negro">LA SEGURIDAD DE SABER DONDE ESTÁN</h2>
+              <h2 className="text-4xl md:text-6xl font-bold text-brand-azul">EMPEZÁ HOY.</h2>
               <div className="flex flex-col md:flex-row gap-4">
-                <StoreButton store="apple" variant="light" />
+                <StoreButton store="apple" variant="dark" />
                 <StoreButton store="google" variant="outline" />
               </div>
             </div>
           </div>
-
         </section>
 
-        <footer className="bg-[#111] text-white py-16 px-8 relative z-20">
+        <footer className="bg-brand-negro text-white py-16 px-8 relative z-20">
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
 
             {/* COMPANY INFO */}
@@ -260,10 +249,10 @@ export default function HomePage() {
                   src="/img/logo.png"
                   alt="Encontrar Logo"
                   fill
-                  style={{ objectFit: 'contain', objectPosition: 'left' }}
+                  className="object-contain object-left"
                 />
               </div>
-              <p className="text-gray-400 leading-relaxed max-w-sm">
+              <p className="text-text-muted leading-relaxed max-w-sm">
                 Comprometidos con la seguridad y la libertad de tus seres queridos.
                 Tecnología de vanguardia para tu tranquilidad.
               </p>
@@ -272,7 +261,7 @@ export default function HomePage() {
             {/* LINKS */}
             <div>
               <h5 className="text-lg font-bold mb-6 text-gray-200">Institucional</h5>
-              <ul className="space-y-4 text-gray-400">
+              <ul className="space-y-4 text-text-muted">
                 <li><a href="#" className="hover:text-white transition-colors">Sobre Nosotros</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Servicios</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Contacto</a></li>
@@ -299,12 +288,17 @@ export default function HomePage() {
                   <span className="sr-only">Instagram</span>
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>
                 </a>
+                {/* Instagram Icon Placeholder */}
+                <a href="#" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-all">
+                  <span className="sr-only">Instagram</span>
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>
+                </a>
               </div>
             </div>
 
           </div>
 
-          <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+          <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-gray-800 text-center text-text-muted text-sm">
             &copy; {new Date().getFullYear()} Encontrar S.A. Todos los derechos reservados.
           </div>
         </footer>

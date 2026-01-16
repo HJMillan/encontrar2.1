@@ -11,9 +11,9 @@ export const longText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit
 export const sectionsConfig: SectionData[] = [
     {
         title: 'Un Familiar',
-        color: '#8A2BE2', // Violet (Fallback/Accent)
-        gradient: { top: '#9d50e6', bottom: '#0f0019' },
-        textColor: 'text-white',
+        color: '#005bef',
+        backgroundColor: 'bg-bg-warm',
+        textColor: 'text-brand-azul',
         subtitle: 'Cuidado y Seguridad',
         image: imgFamiliar,
         features: [
@@ -25,9 +25,9 @@ export const sectionsConfig: SectionData[] = [
     },
     {
         title: 'Tus Objetos',
-        color: '#FF0080', // Pink (Fallback/Accent)
-        gradient: { top: '#ff04a0', bottom: '#57002a' },
-        textColor: 'text-white',
+        color: '#ff0088',
+        backgroundColor: 'bg-bg-cool',
+        textColor: 'text-brand-fucsia',
         subtitle: 'Protección de Bienes',
         image: imgBicicleta,
         features: [
@@ -39,9 +39,9 @@ export const sectionsConfig: SectionData[] = [
     },
     {
         title: 'Tu Vehiculo',
-        color: '#00D1FF', // Cyan (Fallback/Accent)
-        gradient: { top: '#40e0ff', bottom: '#002a38' },
-        textColor: 'text-white', // Improved Contrast for Dark Gradient
+        color: '#005bef',
+        backgroundColor: 'bg-bg-tech',
+        textColor: 'text-brand-azul',
         subtitle: 'Control Vehicular',
         image: imgVehiculo,
         features: [
@@ -53,9 +53,9 @@ export const sectionsConfig: SectionData[] = [
     },
     {
         title: 'Tu Mascota',
-        color: '#FFD700', // Gold (Fallback/Accent)
-        gradient: { top: '#ffea40', bottom: '#995900' },
-        textColor: 'text-white', // Improved Contrast for Dark Gradient
+        color: '#ff0088',
+        backgroundColor: 'bg-bg-visual-soft',
+        textColor: 'text-brand-fucsia',
         subtitle: 'Amor y Cuidado',
         image: imgMascota,
         features: [

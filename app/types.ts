@@ -15,8 +15,11 @@ export interface SectionData {
     title: string;
     subtitle?: string;
     image: StaticImageData | string;
+    // Semantic color for UI accents (buttons, pills)
     color: string;
-    gradient: Gradient;
+    // Tailwind class for the atmospheric background
+    backgroundColor: string;
+    // Tailwind class for text color
     textColor?: string;
     features: Feature[];
 }
