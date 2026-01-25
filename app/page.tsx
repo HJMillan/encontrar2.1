@@ -11,7 +11,7 @@ import Logo from './components/Logo';
 import ScrollySection from './components/ScrollySection';
 import ScrollToTop from './components/ScrollToTop';
 import StoreButton from './components/StoreButton';
-import Loader from './components/Loader';
+
 import { BackgroundLayers } from './components/BackgroundLayers';
 import { NavigationDots } from './components/NavigationDots';
 import { sectionsConfig } from './data';
@@ -26,19 +26,12 @@ export default function HomePage() {
   const container = useRef<HTMLDivElement>(null);
   const scrollyRef = useRef<HTMLElement>(null);
   const bgRefs = useRef<HTMLDivElement[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState(0);
 
-  // Loader Logic handled via GSAP Callback
-  const handleLoaderFinish = () => {
-    setIsLoading(false);
-    // Refresh ScrollTrigger to ensure pinned elements positions are correct after the "curtain" lifts
-    // and DOM potentially shifts (though z-index overlay shouldn't shift layout, it's safer)
-    setTimeout(() => ScrollTrigger.refresh(), 100);
-  };
+
 
   useGSAP(() => {
-    if (isLoading) return;
+
 
     const mm = gsap.matchMedia();
 
@@ -199,11 +192,11 @@ export default function HomePage() {
       tl.to('#footer-logo', { opacity: 1, duration: 1 }, footerLabel);
     });
 
-  }, { scope: container, dependencies: [isLoading] });
+  }, { scope: container });
 
   return (
     <div ref={container} className="relative w-full overflow-hidden">
-      {isLoading && <Loader onFinish={handleLoaderFinish} />}
+
 
       <NavigationDots sections={sectionsConfig} activeIndex={activeSection} />
       <Logo />
@@ -219,7 +212,7 @@ export default function HomePage() {
           {/* 2. Content Layer (Z-10) */}
           <div className="absolute inset-0 z-10 pointer-events-none">
             <h1 className="hero-title absolute inset-x-0 top-1/3 text-center text-5xl md:text-7xl font-black z-30 text-brand-negro">
-              LA LIBERTAD DE<br />DEJARLOS IR...
+              LA SEGURIDAD DE<br />SABER DONDE ESTÁN
             </h1>
 
             {sectionsConfig.map((section, index) => (
@@ -229,7 +222,7 @@ export default function HomePage() {
             ))}
 
             <div className="footer-title absolute inset-0 flex flex-col items-center justify-end text-center opacity-0 pb-32 space-y-8 pointer-events-auto">
-              <h2 className="text-4xl md:text-6xl font-bold mb-40 text-brand-negro">LA SEGURIDAD DE SABER DONDE ESTÁN</h2>
+              <h2 className="text-4xl md:text-6xl font-bold mb-40 text-brand-negro">LA LIBERTAD DE DEJARLOS IR...</h2>
               <h2 className="text-4xl md:text-6xl font-bold text-brand-azul">EMPEZÁ HOY.</h2>
               <div className="flex flex-col md:flex-row gap-4">
                 <StoreButton store="apple" variant="dark" />
