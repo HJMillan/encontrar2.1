@@ -1,8 +1,8 @@
 import React, { forwardRef } from 'react';
-import { SectionData } from '../types';
+import { Section } from '../types';
 
 interface BackgroundLayersProps {
-    sections: SectionData[];
+    sections: Section[];
 }
 
 export const BackgroundLayers = forwardRef<HTMLDivElement[], BackgroundLayersProps>(({ sections }, ref) => {

@@ -1,8 +1,8 @@
 import React from 'react';
-import { SectionData } from '../types';
+import { Section } from '../types';
 
 interface NavigationDotsProps {
-    sections: SectionData[];
+    sections: Section[];
     activeIndex: number;
 }
 

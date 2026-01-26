@@ -1,25 +1,86 @@
 import { LucideIcon } from 'lucide-react';
 import { StaticImageData } from 'next/image';
 
-export interface Feature {
-    text: string;
-    icon: LucideIcon;
+// --- Base Types ---
+
+export interface BaseSection {
+    id: string;
+    theme: 'dark' | 'light' | 'brand';
+    // Visual styles maintained for transition logic
+    backgroundColor: string; // Tailwind class
+    textColor?: string;
 }
 
-export interface Gradient {
-    top: string;
-    bottom: string;
+// 1. Catalog (El Dispositivo)
+export interface CatalogSection extends BaseSection {
+    type: 'catalog';
+    title: string;
+    copy: string;
+    products: {
+        id: string;
+        category: 'Conectados' | 'Portatiles' | 'TAG';
+        models: string[]; // ["Gs900"]
+        description?: string;
+        image?: StaticImageData | string;
+    }[];
 }
 
-export interface SectionData {
+// 2. Steps (Cómo funciona)
+export interface StepsSection extends BaseSection {
+    type: 'steps';
+    heading: string; // "Cómo funciona"
+    subheading?: string;
+    steps: {
+        number: number;
+        title: string;
+        description: string;
+        icon?: LucideIcon;
+    }[];
+}
+
+// 3. App Showcase (La Experiencia)
+export interface AppShowcaseSection extends BaseSection {
+    type: 'app-showcase';
+    title: string;
+    features: string[];
+    cta: { label: string; action: string };
+    screenshots: (StaticImageData | string)[];
+}
+
+// 4. Pricing (Precios)
+export interface PricingSection extends BaseSection {
+    type: 'pricing';
+    title: string;
+    modelName: string; // "Suscripción Mensual"
+    price?: string;
+    features: string[];
+    disclaimer: string;
+}
+
+// 5. Info Grid (Empresa + Tranquilidad)
+export interface InfoGridSection extends BaseSection {
+    type: 'info-grid';
+    title: string;
+    subtitle?: string;
+    items: {
+        icon?: LucideIcon;
+        title: string;
+        text: string;
+    }[];
+}
+
+// 6. Feature (Legacy/Use Cases)
+export interface FeatureSection extends BaseSection {
+    type: 'feature';
     title: string;
     subtitle?: string;
     image: StaticImageData | string;
-    // Semantic color for UI accents (buttons, pills)
-    color: string;
-    // Tailwind class for the atmospheric background
-    backgroundColor: string;
-    // Tailwind class for text color
-    textColor?: string;
-    features: Feature[];
+    features: {
+        text: string;
+        icon: LucideIcon;
+    }[];
 }
+
+// The Master Type
+export type Section = CatalogSection | StepsSection | AppShowcaseSection | PricingSection | InfoGridSection | FeatureSection;
+

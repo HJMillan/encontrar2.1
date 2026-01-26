@@ -17,8 +17,8 @@ export default function Logo() {
                 <span className="absolute inset-0 rounded-full ripple-energy-animation z-0"
                     style={{
                         animationDelay: '2.4s',
-                        border: '2px solid rgba(255, 255, 255, 0.3)',
-                        boxShadow: '0 0 15px rgba(255, 255, 255, 0.4)'
+                        border: '2px solid color-mix(in srgb, #ffb6c1, transparent 80%)',
+                        boxShadow: '0 0 15px color-mix(in srgb, #ffb6c1, transparent 70%)'
                     }}
                 />
 
@@ -29,8 +29,8 @@ export default function Logo() {
                 <span className="absolute inset-0 rounded-full ripple-energy-animation z-0"
                     style={{
                         animationDelay: '1.2s',
-                        border: '2px solid rgba(255, 255, 255, 0.3)',
-                        boxShadow: '0 0 15px rgba(255, 255, 255, 0.4)'
+                        border: '2px solid color-mix(in srgb, #ffb6c1, transparent 80%)',
+                        boxShadow: '0 0 15px color-mix(in srgb, #ffb6c1, transparent 70%)'
                     }}
                 />
 
@@ -41,8 +41,8 @@ export default function Logo() {
                 <span className="absolute inset-0 rounded-full ripple-energy-animation z-0"
                     style={{
                         animationDelay: '0s',
-                        border: '2px solid rgba(255, 255, 255, 0.3)',
-                        boxShadow: '0 0 15px rgba(255, 255, 255, 0.4)'
+                        border: '2px solid color-mix(in srgb, #ffb6c1, transparent 80%)',
+                        boxShadow: '0 0 15px color-mix(in srgb, #ffb6c1, transparent 70%)'
                     }}
                 />
 

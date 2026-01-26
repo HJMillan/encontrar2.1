@@ -54,26 +54,41 @@ export default function HomePage() {
         },
       });
 
+      // 0. Logo Transition (Center -> Top Left)
+      // Happens early, as user scrolls away from Hero
+      tl.to('#app-logo', {
+        left: '2.5rem',
+        top: '2.5rem',
+        x: '0%',
+        y: '0%',
+        xPercent: 0,
+        yPercent: 0,
+        scale: 0.5,
+        transformOrigin: 'top left', // Anchor to corner for predictable spacing
+        opacity: 1,
+        duration: 1,
+        ease: 'power2.inOut'
+      }, 0);
+
       // 1. Hero Exit
       tl.fromTo('.hero-title', { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.8, duration: 1, ease: 'power2.in' }, '+=1');
 
       // 2. Section Loop
       sectionsConfig.forEach((section, index) => {
-        const sectionId = `#section-${index}`;
+        const sectionId = `#section-${index}-content`;
         const timelineLabel = `section${index}`;
 
-        // Content Entrance (Pincer Effect)
-        tl.fromTo(`${sectionId}-title`, { xPercent: -100, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 2 }, timelineLabel);
-        tl.fromTo(`${sectionId}-image`, { xPercent: 100, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 2 }, timelineLabel);
-
-        // Staggered Features
-        tl.fromTo(`${sectionId}-title ul li`, { x: -20, opacity: 0 }, { x: 0, opacity: 1, stagger: 0.1, duration: 1 }, `${timelineLabel}+=1`);
+        // Generic Content Entrance (Fade Up)
+        tl.fromTo(sectionId,
+          { y: 50, opacity: 0, scale: 0.95 },
+          { y: 0, opacity: 1, scale: 1, duration: 2, ease: 'power2.out' },
+          timelineLabel
+        );
 
         // Navigation Pill
         tl.to('#nav-indicator', { y: `${index * NAV_DOT_SPACING_REM}rem`, duration: 1, ease: 'power2.out' }, timelineLabel);
 
         // Background Atmosphere Transition (Cross-fade)
-        // Verified: Uses GSAP opacity scrubbing on the absolute layer. No CSS conflicts.
         if (bgRefs.current[index]) {
           tl.fromTo(bgRefs.current[index],
             { opacity: 0 },
@@ -83,7 +98,6 @@ export default function HomePage() {
         }
 
         // UX State: Update Active Section for Navigation Dots
-        // Using a lightweight, separate ScrollTrigger for state management to avoid scrubbing weirdness
         ScrollTrigger.create({
           trigger: 'body',
           start: `top+=${index * SCROLL_PER_SECTION} top`,
@@ -93,30 +107,20 @@ export default function HomePage() {
           }
         });
 
-        // Content Exit (Pincer Out or Standard Fade)
-        // Must happen before the next section enters fully
+        // Content Exit (Fade Out)
         if (index < sectionsConfig.length) {
           const exitTime = `${timelineLabel}+=3`;
-          tl.to(`${sectionId}-title`, { xPercent: -100, opacity: 0, duration: 2 }, exitTime);
-          tl.to(`${sectionId}-image`, { xPercent: 100, opacity: 0, duration: 2 }, exitTime);
+          tl.to(sectionId, { opacity: 0, scale: 0.9, duration: 2 }, exitTime);
         }
       });
 
       // 3. Footer Entrance
       const footerLabel = 'footer';
-      tl.to('.gps-device', { opacity: 0, scale: 0, duration: 2 }, footerLabel);
+      // tl.to('.gps-device', { opacity: 0, scale: 0, duration: 2 }, footerLabel); // Removed device
       tl.fromTo('.footer-title', { opacity: 0, y: 100 }, { opacity: 1, y: 0, duration: 2 }, footerLabel);
 
-      // Fluid Logo Transition
-      tl.to('#app-logo', {
-        x: '-42vw',
-        y: '-22vh',
-        scale: 0.7,
-        opacity: 0,
-        duration: 1.5,
-        ease: 'power2.inOut'
-      }, footerLabel);
-
+      // Logo stays there, or we can fade it out for footer logo
+      tl.to('#app-logo', { opacity: 0, duration: 0.5 }, footerLabel);
       // Reveal static footer logo
       tl.to('#footer-logo', { opacity: 1, duration: 0.5 }, `${footerLabel}+=1`);
     });
@@ -148,27 +152,25 @@ export default function HomePage() {
         }
       });
 
-      // Logo Animation
+      // Logo Animation (Center -> Top Left Mobile)
       tl.to('#app-logo', {
-        left: '2rem',
+        left: '1.5rem',
+        top: '1.5rem',
         xPercent: 0,
-        scale: 0.5,
-        transformOrigin: 'bottom left',
+        yPercent: 0,
+        scale: 0.4,
+        transformOrigin: 'top left',
         duration: 0.5,
         ease: 'power1.out'
       }, 0);
 
       // Section Loop
       sectionsConfig.forEach((section, index) => {
-        const sectionId = `#section-${index}`;
+        const sectionId = `#section-${index}-content`;
         const timelineLabel = `section${index}`;
 
-        // Vertical Entrance
-        tl.fromTo(`${sectionId}-title`, { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 2 }, timelineLabel);
-        tl.fromTo(`${sectionId}-image`, { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 2 }, timelineLabel);
-
-        // Features (Stagger)
-        tl.fromTo(`${sectionId}-title ul li`, { y: 10, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 1 }, `${timelineLabel}+=0.5`);
+        // Vertical Entrance (Fade Up)
+        tl.fromTo(sectionId, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 2 }, timelineLabel);
 
         // Background Atmosphere (Mobile)
         if (bgRefs.current[index]) {
@@ -181,13 +183,12 @@ export default function HomePage() {
 
         // Exit
         const exitTime = `${timelineLabel}+=3`;
-        tl.to(`${sectionId}-title`, { opacity: 0, duration: 2 }, exitTime);
-        tl.to(`${sectionId}-image`, { opacity: 0, duration: 2 }, exitTime);
+        tl.to(sectionId, { opacity: 0, duration: 2 }, exitTime);
       });
 
       // Footer
       const footerLabel = 'footer';
-      tl.to('.gps-device', { opacity: 0, scale: 0, duration: 2 }, footerLabel);
+      // tl.to('.gps-device', { opacity: 0, scale: 0, duration: 2 }, footerLabel);
       tl.fromTo('.footer-title', { opacity: 0, y: 100 }, { opacity: 1, y: 0, duration: 2 }, footerLabel);
       tl.to('#footer-logo', { opacity: 1, duration: 1 }, footerLabel);
     });
@@ -216,7 +217,7 @@ export default function HomePage() {
             </h1>
 
             {sectionsConfig.map((section, index) => (
-              <div key={section.title} className="pointer-events-auto">
+              <div key={section.id} className="pointer-events-auto">
                 <ScrollySection section={section} index={index} priority={index === 0} />
               </div>
             ))}
