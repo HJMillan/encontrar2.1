@@ -116,7 +116,7 @@ export const sectionsConfig: Section[] = [
         theme: 'brand',
         backgroundColor: 'bg-brand-azul',
         textColor: 'text-white',
-        heading: 'Cómo funciona',
+        title: 'Cómo funciona',
         steps: [
             {
                 number: 1,

@@ -5,7 +5,7 @@ export default function StepsView({ data }: { data: StepsSection }) {
     return (
         <div className="flex flex-col h-full justify-center relative z-10 px-4 md:px-12 max-w-7xl mx-auto">
             <h2 className={`text-4xl md:text-6xl font-black text-center mb-16 ${data.theme === 'dark' ? 'text-white' : 'text-brand-negro'}`}>
-                {data.heading}
+                {data.title}
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">

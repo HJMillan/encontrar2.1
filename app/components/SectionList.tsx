@@ -19,13 +19,15 @@ export default function SectionList() {
                         id={`section-${index}-image`}
                         className="absolute left-0 top-1/2 md:left-auto md:right-0 md:top-0 h-1/2 w-full md:h-full md:w-1/2 flex items-center justify-center"
                     >
-                        <Image
-                            src={section.image}
-                            alt={section.title}
-                            width={400}
-                            height={400}
-                            className="rounded-2xl shadow-2xl bg-white/10 p-2 w-48 h-48 md:w-[400px] md:h-[400px] object-cover"
-                        />
+                        {(section as any).image && (
+                            <Image
+                                src={(section as any).image}
+                                alt={section.title}
+                                width={400}
+                                height={400}
+                                className="rounded-2xl shadow-2xl bg-white/10 p-2 w-48 h-48 md:w-[400px] md:h-[400px] object-cover"
+                            />
+                        )}
                     </div>
                 </div>
             ))}

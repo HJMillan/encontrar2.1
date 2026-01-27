@@ -28,7 +28,7 @@ export interface CatalogSection extends BaseSection {
 // 2. Steps (Cómo funciona)
 export interface StepsSection extends BaseSection {
     type: 'steps';
-    heading: string; // "Cómo funciona"
+    title: string; // "Cómo funciona"
     subheading?: string;
     steps: {
         number: number;
