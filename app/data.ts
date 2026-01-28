@@ -1,4 +1,4 @@
-import { Share2, MapPin, Bell, Battery, ShieldCheck, Map, Headphones, Smartphone, Navigation, Lock, LocateFixed, Activity, Heart } from 'lucide-react';
+import { Share2, MapPin, Bell, Battery, ShieldCheck, Map, Headphones, Smartphone, Navigation, Lock, LocateFixed, Activity, Heart, Monitor, Car, Radio } from 'lucide-react';
 import { Section } from './types';
 
 // Placeholder imports - logic to be replaced with real paths by user
@@ -164,19 +164,19 @@ export const sectionsConfig: Section[] = [
     {
         id: 'pricing',
         type: 'pricing',
-        theme: 'dark',
-        backgroundColor: 'bg-brand-negro',
-        textColor: 'text-white',
-        title: 'Precio y forma de compra',
-        modelName: 'Suscripción Mensual',
-        price: '$ Consultar',
-        disclaimer: 'Sin costos ocultos ni configuraciones complicadas.',
+        theme: 'light',
+        backgroundColor: 'bg-bg-tech',
+        textColor: 'text-brand-negro',
+        title: 'Inversión simple, todo incluido',
+        modelName: 'Plan SmartTrack Integral',
+        price: 'Desde $15.000 / mes',
+        disclaimer: 'Sin costos ocultos ni letras chicas.',
         features: [
-            'Uso completo de la plataforma SmartTrack.',
-            'Acceso a la App (Android, iOS y Web).',
-            'Conectividad incluida (chip y datos).',
-            'Soporte técnico.',
-            'Actualizaciones de la plataforma.'
+            { text: 'Plataforma SmartTrack: Acceso total y actualizaciones.', icon: Monitor },
+            { text: 'App Móvil: Control total en Android, iOS y Web.', icon: Smartphone },
+            { text: 'Conectividad Total: Chip y datos bonificados.', icon: Radio, highlight: true },
+            { text: 'Soporte técnico humano y ágil.', icon: Headphones },
+            { text: 'Garantía de Transparencia.', icon: ShieldCheck, highlight: true }
         ]
     },
     // 8. TRANQUILIDAD

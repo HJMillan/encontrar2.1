@@ -53,7 +53,11 @@ export interface PricingSection extends BaseSection {
     title: string;
     modelName: string; // "Suscripción Mensual"
     price?: string;
-    features: string[];
+    features: {
+        text: string;
+        highlight?: boolean;
+        icon?: LucideIcon;
+    }[];
     disclaimer: string;
 }
 

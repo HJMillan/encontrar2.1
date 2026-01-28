@@ -5,29 +5,56 @@ import { Check } from 'lucide-react';
 export default function PricingView({ data }: { data: PricingSection }) {
     return (
         <div className="flex flex-col h-full justify-center items-center relative z-10 px-4 max-w-5xl mx-auto">
-            <h2 className="text-4xl md:text-6xl font-black text-center mb-12 text-brand-negro">
+            {/* Decorative Background Elements */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] pointer-events-none z-[-1] overflow-hidden">
+                <div className="absolute top-[10%] left-[20%] w-72 h-72 bg-brand-azul/10 rounded-full blur-[80px] animate-pulse" />
+                <div className="absolute bottom-[10%] right-[20%] w-96 h-96 bg-brand-fucsia/5 rounded-full blur-[100px]" />
+            </div>
+            <h2 className="text-2xl md:text-4xl font-black text-center mb-4 md:mb-8 text-brand-negro">
                 {data.title}
             </h2>
 
-            <div className="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 transform hover:scale-105 transition-transform duration-300">
-                <div className="bg-brand-azul p-8 text-center text-white">
-                    <h3 className="text-2xl font-bold mb-2">{data.modelName}</h3>
-                    {data.price && <div className="text-5xl font-black">{data.price}</div>}
-                    <p className="opacity-90 mt-2 text-sm">{data.disclaimer}</p>
+            <div className="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 transform hover:scale-[1.02] transition-transform duration-300 hover:shadow-2xl">
+                <div className="bg-brand-azul p-5 md:p-6 text-center text-white relative overflow-hidden">
+                    <div className="relative z-10">
+                        <h3 className="text-xl font-medium mb-1 uppercase tracking-wide text-white">{data.modelName}</h3>
+                        {data.price ? (
+                            <div className="text-3xl md:text-4xl font-black mb-1">
+                                {data.price.includes('/') ? (
+                                    <>
+                                        {data.price.split('/')[0]}
+                                        <span className="text-lg md:text-xl opacity-80 font-medium ml-1">/ {data.price.split('/')[1].trim()}</span>
+                                    </>
+                                ) : (
+                                    data.price
+                                )}
+                            </div>
+                        ) : (
+                            <div className="text-4xl md:text-5xl font-black mb-2">$ Consultar</div>
+                        )}
+                        <div className="inline-block bg-white/20 backdrop-blur-md border border-white/20 rounded-full px-4 py-1.5 text-xs font-bold mt-2 shadow-sm text-white">
+                            {data.disclaimer}
+                        </div>
+                    </div>
                 </div>
-                <div className="p-8">
-                    <ul className="space-y-4">
-                        {data.features.map((feature, i) => (
-                            <li key={i} className="flex items-start gap-4 text-gray-700">
-                                <div className="mt-1 bg-green-100 text-green-600 rounded-full p-1">
-                                    <Check size={14} strokeWidth={3} />
-                                </div>
-                                <span className="font-medium">{feature}</span>
-                            </li>
-                        ))}
+                <div className="p-5 md:p-6">
+                    <ul className="space-y-2 mb-4">
+                        {data.features.map((feature, i) => {
+                            const Icon = feature.icon || Check;
+                            return (
+                                <li key={i} className="flex items-start gap-4 text-gray-700">
+                                    <div className={`mt-1 rounded-full p-2 ${feature.highlight ? 'bg-blue-100 text-brand-azul' : 'bg-gray-100 text-gray-500'}`}>
+                                        <Icon size={18} strokeWidth={3} />
+                                    </div>
+                                    <span className={`${feature.highlight ? 'font-bold text-gray-900' : 'font-medium'}`}>
+                                        {feature.text}
+                                    </span>
+                                </li>
+                            );
+                        })}
                     </ul>
-                    <button className="w-full mt-8 bg-brand-negro text-white font-bold py-4 rounded-xl hover:bg-gray-800 transition-colors">
-                        Contratar Ahora
+                    <button className="w-full mt-4 bg-brand-negro text-white font-bold py-3 rounded-xl hover:bg-gray-800 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 duration-200">
+                        {data.price ? "Empezar Ahora" : "Solicitar Cotización Rápida"}
                     </button>
                 </div>
             </div>
