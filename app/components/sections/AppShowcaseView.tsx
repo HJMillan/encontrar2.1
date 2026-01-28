@@ -36,16 +36,11 @@ export default function AppShowcaseView({ data }: { data: AppShowcaseSection }) 
             <div className="flex-1 order-1 md:order-2 relative h-[50vh] md:h-[70vh] w-full flex items-center justify-center">
                 {/* Placeholder for real screenshots slider later */}
                 {data.screenshots[0] && (
-                    <div className="relative w-full max-w-sm h-full shadow-2xl rounded-[3rem] overflow-hidden border-8 border-gray-900 bg-gray-900">
-                        {typeof data.screenshots[0] !== 'string' && (
-                            <Image
-                                src={data.screenshots[0]}
-                                alt="App Screenshot"
-                                fill
-                                className="object-cover"
-                            />
-                        )}
-                    </div>
+                    <img
+                        src={typeof data.screenshots[0] === 'string' ? data.screenshots[0] : data.screenshots[0].src}
+                        alt="App Screenshot"
+                        className="h-full w-auto shadow-2xl rounded-[2rem] md:rounded-[2.5rem] border-8 border-gray-900 bg-gray-900 mx-auto"
+                    />
                 )}
             </div>
         </div>

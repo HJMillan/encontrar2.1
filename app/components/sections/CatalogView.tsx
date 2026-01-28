@@ -60,20 +60,17 @@ export default function CatalogView({ data }: { data: CatalogSection }) {
 
                                 {/* Main Image Mask */}
                                 <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white shadow-lg z-10 bg-white">
-                                    {typeof product.image === 'string' ? (
-                                        // Fallback for empty/string image
+                                    {product.image ? (
+                                        <Image
+                                            src={product.image}
+                                            alt={product.models.join(', ')}
+                                            fill
+                                            className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                        />
+                                    ) : (
                                         <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
                                             no img
                                         </div>
-                                    ) : (
-                                        product.image && (
-                                            <Image
-                                                src={product.image}
-                                                alt={product.models.join(', ')}
-                                                fill
-                                                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                                            />
-                                        )
                                     )}
                                 </div>
                             </div>

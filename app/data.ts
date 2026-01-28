@@ -82,7 +82,7 @@ export const sectionsConfig: Section[] = [
         type: 'catalog',
         theme: 'light',
         backgroundColor: 'bg-bg-warm',
-        title: '¿Qué es SmartTrack?',
+        title: '¿Qué es Encontrar?',
         copy: 'Rastreo inteligente para objetos, vehículos o personas. Compacto, sin botones, automático.',
         products: [
             {
@@ -90,21 +90,21 @@ export const sectionsConfig: Section[] = [
                 category: 'Conectados',
                 models: ['Gs900'],
                 description: 'Requiere instalación. Ideal para vehículos y flotas.',
-                image: '' // User to provide
+                image: '/img/model/gs900.png' // User to provide
             },
             {
                 id: 'portables',
                 category: 'Portatiles',
-                models: ['Lk6000', 'Lk20000'],
+                models: ['Lk6000'],
                 description: 'Solo carga, sin instalación. Autonomía extendida.',
-                image: ''
+                image: '/img/model/LK6000.png'
             },
             {
                 id: 'tag',
                 category: 'TAG', // Should match union type
                 models: ['Micro'],
                 description: 'Dispositivos micro para mochilas, llaves o collares.',
-                image: ''
+                image: '/img/model/tag.webp'
             }
         ]
     },
@@ -113,27 +113,28 @@ export const sectionsConfig: Section[] = [
     {
         id: 'how-it-works',
         type: 'steps',
-        theme: 'brand',
-        backgroundColor: 'bg-brand-azul',
-        textColor: 'text-white',
+        theme: 'light',
+        backgroundColor: 'bg-bg-tech',
+        textColor: 'text-brand-azul',
         title: 'Cómo funciona',
+        subheading: 'Colocás el dispositivo donde quieras y ves la ubicación desde tu celular.',
         steps: [
             {
                 number: 1,
-                title: 'Contratas',
+                title: 'Contratas el servicio',
                 description: 'Elegís el plan que mejor se adapta a vos.',
                 icon: Share2
             },
             {
                 number: 2,
-                title: 'Colocás',
-                description: 'El dispositivo donde lo necesitás.',
+                title: 'Colocás el dispositivo',
+                description: 'Donde lo necesitás (vehículo, mochila, mascota, etc.).',
                 icon: MapPin
             },
             {
                 number: 3,
-                title: 'Visualizás',
-                description: 'Ves la ubicación y alertas desde la App.',
+                title: 'Visualizás la ubicación',
+                description: 'Y recibís alertas desde la App.',
                 icon: Smartphone
             }
         ]
@@ -156,7 +157,7 @@ export const sectionsConfig: Section[] = [
             action: '#'
         },
         screenshots: [
-            '' // User to provide
+            '/img/campturas/Screenshot_02.png' // User to provide
         ]
     },
     // 7. PRECIOS
