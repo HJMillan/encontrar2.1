@@ -1,4 +1,4 @@
-import { Share2, MapPin, Bell, Battery, ShieldCheck, Map, Headphones, Smartphone, Navigation, Lock, LocateFixed, Activity, Heart, Monitor, Car, Radio } from 'lucide-react';
+import { Share2, MapPin, Bell, Battery, ShieldCheck, Map, Headphones, Smartphone, Navigation, Lock, LocateFixed, Activity, Heart, Monitor, Car, Radio, Building2 } from 'lucide-react';
 import { Section } from './types';
 
 // Placeholder imports - logic to be replaced with real paths by user
@@ -189,29 +189,29 @@ export const sectionsConfig: Section[] = [
         subtitle: 'Datos que responden al miedo principal: “¿y si falla?”',
         items: [
             {
-                title: 'Batería',
-                text: 'Autonomía diseñada para uso real y cotidiano.',
+                title: 'Batería de Larga Duración',
+                text: 'Hasta 5 días de autonomía sin recargas constantes.',
                 icon: Battery
             },
             {
-                title: 'Garantía',
-                text: 'El dispositivo cuenta con garantía y respaldo local.',
+                title: 'Garantía Local Inmediata',
+                text: 'Respaldo directo en Argentina. Si falla, lo solucionamos.',
                 icon: ShieldCheck
             },
             {
-                title: 'Cobertura',
-                text: 'Funciona en todo el país gracias a conectividad móvil.',
+                title: 'Cobertura Nacional 4G',
+                text: 'Tu vehículo siempre visible, estés donde estés.',
                 icon: Map
             },
             {
-                title: 'Soporte',
-                text: 'Asistencia técnica disponible para acompañar al usuario.',
+                title: 'Soporte Humano',
+                text: 'Asistencia técnica real para acompañarte siempre.',
                 icon: Headphones
             },
             {
-                title: 'Empresa',
-                text: 'ENCONTRAR es una empresa argentina con plataforma propia.',
-                icon: ShieldCheck
+                title: 'Desarrollo 100% Argentino',
+                text: 'Sin intermediarios. Hablas con quienes crearon la plataforma.',
+                icon: Building2
             }
         ]
     }
