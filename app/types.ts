@@ -52,13 +52,17 @@ export interface PricingSection extends BaseSection {
     type: 'pricing';
     title: string;
     modelName: string; // "Suscripción Mensual"
-    price?: string;
+    price?: {
+        amount: string; // "$15.000"
+        period?: string; // "mes"
+    };
     features: {
         text: string;
         highlight?: boolean;
         icon?: LucideIcon;
     }[];
     disclaimer: string;
+    ctaLabel?: string;
 }
 
 // 5. Info Grid (Empresa + Tranquilidad)
@@ -85,6 +89,29 @@ export interface FeatureSection extends BaseSection {
     }[];
 }
 
+// 7. Company Profile (La Empresa)
+export interface CompanyProfileSection extends BaseSection {
+    type: 'company-profile';
+    title: string; // "Quiénes somos"
+    description: string; // "ENCONTRAR es una empresa..."
+    purpose: {
+        title: string; // "Propósito"
+        text: string;
+    };
+    mission: {
+        title: string; // "Misión"
+        text: string;
+    };
+    objective: {
+        title: string; // "Objetivo"
+        text: string;
+    };
+    legitimacySignals: {
+        title: string; // "Señales de legitimidad"
+        items: string[];
+    };
+}
+
 // The Master Type
-export type Section = CatalogSection | StepsSection | AppShowcaseSection | PricingSection | InfoGridSection | FeatureSection;
+export type Section = CatalogSection | StepsSection | AppShowcaseSection | PricingSection | InfoGridSection | FeatureSection | CompanyProfileSection;
 

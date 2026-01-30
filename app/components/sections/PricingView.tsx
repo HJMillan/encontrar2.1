@@ -5,28 +5,26 @@ import { Check } from 'lucide-react';
 export default function PricingView({ data }: { data: PricingSection }) {
     return (
         <div className="flex flex-col h-full justify-center items-center relative z-10 px-4 max-w-5xl mx-auto">
-            {/* Decorative Background Elements */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] pointer-events-none z-[-1] overflow-hidden">
-                <div className="absolute top-[10%] left-[20%] w-72 h-72 bg-brand-azul/10 rounded-full blur-[80px] animate-pulse" />
-                <div className="absolute bottom-[10%] right-[20%] w-96 h-96 bg-brand-fucsia/5 rounded-full blur-[100px]" />
+            {/* Decorative Background Elements (Optimized) */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none z-[-1] overflow-visible max-w-3xl">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-brand-azul/10 rounded-full mix-blend-multiply filter blur-3xl opacity-70" />
+                <div className="absolute bottom-0 left-0 w-80 h-80 bg-brand-fucsia/5 rounded-full mix-blend-multiply filter blur-3xl opacity-70" />
             </div>
             <h2 className="text-2xl md:text-4xl font-black text-center mb-4 md:mb-8 text-brand-negro">
                 {data.title}
             </h2>
 
-            <div className="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 transform hover:scale-[1.02] transition-transform duration-300 hover:shadow-2xl">
+            <div className="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 transform hover:scale-105 transition-transform duration-300 hover:shadow-2xl">
                 <div className="bg-brand-azul p-5 md:p-6 text-center text-white relative overflow-hidden">
                     <div className="relative z-10">
                         <h3 className="text-xl font-medium mb-1 uppercase tracking-wide text-white">{data.modelName}</h3>
                         {data.price ? (
                             <div className="text-3xl md:text-4xl font-black mb-1">
-                                {data.price.includes('/') ? (
-                                    <>
-                                        {data.price.split('/')[0]}
-                                        <span className="text-lg md:text-xl opacity-80 font-medium ml-1">/ {data.price.split('/')[1].trim()}</span>
-                                    </>
-                                ) : (
-                                    data.price
+                                {data.price.amount}
+                                {data.price.period && (
+                                    <span className="text-lg md:text-xl opacity-80 font-medium ml-1">
+                                        / {data.price.period}
+                                    </span>
                                 )}
                             </div>
                         ) : (

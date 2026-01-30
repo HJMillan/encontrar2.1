@@ -6,6 +6,7 @@ import AppShowcaseView from './AppShowcaseView';
 import PricingView from './PricingView';
 import InfoGridView from './InfoGridView';
 import FeatureView from './FeatureView';
+import CompanyProfileView from './CompanyProfileView';
 
 interface SectionRendererProps {
     section: Section;
@@ -25,6 +26,8 @@ export default function SectionRenderer({ section }: SectionRendererProps) {
             return <InfoGridView data={section} />;
         case 'feature':
             return <FeatureView data={section} />;
+        case 'company-profile':
+            return <CompanyProfileView data={section} />;
         default:
             return null;
     }

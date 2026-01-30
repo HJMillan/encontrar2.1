@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from 'react';
-import { ReactLenis } from 'lenis/react'
+import { ReactLenis, type LenisRef } from 'lenis/react'
 import 'lenis/dist/lenis.css'
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -9,7 +9,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
-    const lenisRef = useRef<any>(null);
+    const lenisRef = useRef<LenisRef>(null);
 
     useEffect(() => {
         // TAREA 2: CONFIGURACIÓN GLOBAL DE GSAP
@@ -44,7 +44,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
                 touchMultiplier: 1.5,
             }}
         >
-            {children as any}
+            {children}
         </ReactLenis>
     );
 }

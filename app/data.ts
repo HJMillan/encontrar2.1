@@ -169,7 +169,10 @@ export const sectionsConfig: Section[] = [
         textColor: 'text-brand-negro',
         title: 'Inversión simple, todo incluido',
         modelName: 'Plan SmartTrack Integral',
-        price: 'Desde $15.000 / mes',
+        price: {
+            amount: 'Desde $15.000',
+            period: 'mes'
+        },
         disclaimer: 'Sin costos ocultos ni letras chicas.',
         features: [
             { text: 'Plataforma SmartTrack: Acceso total y actualizaciones.', icon: Monitor },
@@ -179,7 +182,37 @@ export const sectionsConfig: Section[] = [
             { text: 'Garantía de Transparencia.', icon: ShieldCheck, highlight: true }
         ]
     },
-    // 8. TRANQUILIDAD
+    // 8. LA EMPRESA (New Section)
+    {
+        id: 'company-profile',
+        type: 'company-profile',
+        theme: 'light',
+        backgroundColor: 'bg-bg-warm',
+        title: 'Quiénes somos',
+        description: 'ENCONTRAR es una empresa argentina especializada en soluciones de rastreo satelital y monitoreo inteligente.',
+        purpose: {
+            title: 'Propósito',
+            text: 'Brindar tranquilidad, control e información clara a personas, familias y empresas a través de tecnología simple y confiable.'
+        },
+        mission: {
+            title: 'Misión',
+            text: 'Facilitar el acceso al rastreo y monitoreo sin complejidad técnica.'
+        },
+        objective: {
+            title: 'Objetivo',
+            text: 'Generar confianza y respaldo institucional.'
+        },
+        legitimacySignals: {
+            title: 'Señales de legitimidad',
+            items: [
+                'Empresa argentina.',
+                'Plataforma propia.',
+                'Soporte técnico local.',
+                'Experiencia en soluciones de rastreo y monitoreo.'
+            ]
+        }
+    },
+    // 9. TRANQUILIDAD
     {
         id: 'trust-info',
         type: 'info-grid',
